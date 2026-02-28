@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
-        "postgresql://user:password@localhost:5432/ckd_intelligence"
+        "postgresql://neondb_owner:npg_EXAh7u8InZjK@ep-floral-dew-ai8o72vz-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+        "sqlite:///./ckd_intelligence.db"
     )
     
     # JWT

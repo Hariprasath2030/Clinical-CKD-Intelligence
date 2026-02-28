@@ -1,10 +1,17 @@
-import Navbar from "../../components/layout/Navbar";
+import "./globals.css";
+import Navbar from "../components/layout/Navbar";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <>
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">{children}</main>
-    </>
+    <html lang="en">
+      <body>
+        <Navbar />
+        <main className="container mx-auto px-4 py-8">{children}</main>
+      </body>
+    </html>
   );
 }
