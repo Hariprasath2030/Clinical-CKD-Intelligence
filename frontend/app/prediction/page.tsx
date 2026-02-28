@@ -21,14 +21,18 @@ export default function PredictionPage() {
         test_date: new Date().toISOString(),
         serum_creatinine: parseFloat(formData.serumCreatinine),
         cystatin_c: parseFloat(formData.cystatinC) || null,
-        blood_pressure_sys: parseInt(formData.bloodPressure.split("/")[0]) || null,
-        blood_pressure_dia: parseInt(formData.bloodPressure.split("/")[1]) || null,
+        blood_pressure_sys:
+          parseInt(formData.bloodPressure.split("/")[0]) || null,
+        blood_pressure_dia:
+          parseInt(formData.bloodPressure.split("/")[1]) || null,
       };
 
       const response = await runPrediction(payload);
       setPrediction(response.data);
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Prediction failed. Please try again.");
+      setError(
+        err.response?.data?.detail || "Prediction failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -62,7 +66,9 @@ export default function PredictionPage() {
 
             {prediction.top_contributing_features && (
               <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold mb-4">Feature Importance (SHAP)</h3>
+                <h3 className="text-lg font-semibold mb-4">
+                  Feature Importance (SHAP)
+                </h3>
                 <ShapChart features={prediction.top_contributing_features} />
               </div>
             )}
@@ -72,7 +78,9 @@ export default function PredictionPage() {
 
       {prediction && prediction.recommendations && (
         <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Clinical Recommendations</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            Clinical Recommendations
+          </h2>
           <div className="prose max-w-none">
             <p className="text-gray-700 mb-4">{prediction.clinical_guidance}</p>
             <ul className="space-y-2">

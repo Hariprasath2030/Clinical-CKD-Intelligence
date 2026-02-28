@@ -70,7 +70,9 @@ export default function PatientDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-sm font-medium text-gray-500">Total Tests</h3>
-          <p className="mt-2 text-3xl font-semibold text-gray-900">{labResults.length}</p>
+          <p className="mt-2 text-3xl font-semibold text-gray-900">
+            {labResults.length}
+          </p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
@@ -108,8 +110,12 @@ export default function PatientDashboard() {
                 const payload = {
                   date_of_birth: profileForm.date_of_birth,
                   sex: profileForm.sex,
-                  height_cm: profileForm.height_cm ? Number(profileForm.height_cm) : undefined,
-                  weight_kg: profileForm.weight_kg ? Number(profileForm.weight_kg) : undefined,
+                  height_cm: profileForm.height_cm
+                    ? Number(profileForm.height_cm)
+                    : undefined,
+                  weight_kg: profileForm.weight_kg
+                    ? Number(profileForm.weight_kg)
+                    : undefined,
                   medical_history: profileForm.medical_history,
                   medications: profileForm.medications,
                 };
@@ -128,7 +134,12 @@ export default function PatientDashboard() {
               <input
                 type="date"
                 value={profileForm.date_of_birth}
-                onChange={(e) => setProfileForm((p) => ({ ...p, date_of_birth: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((p) => ({
+                    ...p,
+                    date_of_birth: e.target.value,
+                  }))
+                }
                 className="w-full mt-1 rounded border px-3 py-2"
                 required
               />
@@ -138,7 +149,9 @@ export default function PatientDashboard() {
               <label className="block text-sm">Sex</label>
               <select
                 value={profileForm.sex}
-                onChange={(e) => setProfileForm((p) => ({ ...p, sex: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((p) => ({ ...p, sex: e.target.value }))
+                }
                 className="w-full mt-1 rounded border px-3 py-2"
               >
                 <option value="M">Male</option>
@@ -151,7 +164,9 @@ export default function PatientDashboard() {
               <input
                 type="number"
                 value={profileForm.height_cm}
-                onChange={(e) => setProfileForm((p) => ({ ...p, height_cm: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((p) => ({ ...p, height_cm: e.target.value }))
+                }
                 className="w-full mt-1 rounded border px-3 py-2"
               />
             </div>
@@ -161,7 +176,9 @@ export default function PatientDashboard() {
               <input
                 type="number"
                 value={profileForm.weight_kg}
-                onChange={(e) => setProfileForm((p) => ({ ...p, weight_kg: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((p) => ({ ...p, weight_kg: e.target.value }))
+                }
                 className="w-full mt-1 rounded border px-3 py-2"
               />
             </div>
@@ -171,7 +188,12 @@ export default function PatientDashboard() {
               <input
                 type="text"
                 value={profileForm.medical_history}
-                onChange={(e) => setProfileForm((p) => ({ ...p, medical_history: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((p) => ({
+                    ...p,
+                    medical_history: e.target.value,
+                  }))
+                }
                 className="w-full mt-1 rounded border px-3 py-2"
               />
             </div>
@@ -181,13 +203,17 @@ export default function PatientDashboard() {
               <input
                 type="text"
                 value={profileForm.medications}
-                onChange={(e) => setProfileForm((p) => ({ ...p, medications: e.target.value }))}
+                onChange={(e) =>
+                  setProfileForm((p) => ({ ...p, medications: e.target.value }))
+                }
                 className="w-full mt-1 rounded border px-3 py-2"
               />
             </div>
 
             <div>
-              <button className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700">Save Profile</button>
+              <button className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700">
+                Save Profile
+              </button>
             </div>
           </form>
         </div>
@@ -202,7 +228,9 @@ export default function PatientDashboard() {
               className="block w-full text-left px-4 py-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition"
             >
               <h3 className="font-medium text-blue-900">Voice Consultation</h3>
-              <p className="text-sm text-blue-700">Speak with our AI assistant</p>
+              <p className="text-sm text-blue-700">
+                Speak with our AI assistant
+              </p>
             </a>
 
             <a
@@ -210,7 +238,9 @@ export default function PatientDashboard() {
               className="block w-full text-left px-4 py-3 bg-green-50 hover:bg-green-100 rounded-lg transition"
             >
               <h3 className="font-medium text-green-900">Get Prediction</h3>
-              <p className="text-sm text-green-700">Submit lab data for analysis</p>
+              <p className="text-sm text-green-700">
+                Submit lab data for analysis
+              </p>
             </a>
 
             <a
@@ -218,7 +248,9 @@ export default function PatientDashboard() {
               className="block w-full text-left px-4 py-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition"
             >
               <h3 className="font-medium text-purple-900">View Reports</h3>
-              <p className="text-sm text-purple-700">Access your medical reports</p>
+              <p className="text-sm text-purple-700">
+                Access your medical reports
+              </p>
             </a>
           </div>
         </div>
@@ -230,13 +262,19 @@ export default function PatientDashboard() {
           ) : (
             <div className="space-y-4">
               {labResults.slice(0, 5).map((result, index) => (
-                <div key={index} className="border-l-4 border-blue-500 pl-4 py-2">
-                  <p className="font-medium">Test Date: {formatDate(result.test_date)}</p>
+                <div
+                  key={index}
+                  className="border-l-4 border-blue-500 pl-4 py-2"
+                >
+                  <p className="font-medium">
+                    Test Date: {formatDate(result.test_date)}
+                  </p>
                   <p className="text-sm text-gray-600">
                     SCr: {result.serum_creatinine} mg/dL
                   </p>
                   <p className="text-sm text-gray-600">
-                    BP: {result.blood_pressure_sys}/{result.blood_pressure_dia} mmHg
+                    BP: {result.blood_pressure_sys}/{result.blood_pressure_dia}{" "}
+                    mmHg
                   </p>
                 </div>
               ))}

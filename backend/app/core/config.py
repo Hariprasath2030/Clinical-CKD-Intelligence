@@ -4,6 +4,7 @@ Configuration module for backend settings
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 import os
+from pathlib import Path
 
 class Settings(BaseSettings):
     """Application settings from environment variables"""
@@ -31,8 +32,11 @@ class Settings(BaseSettings):
         "https://localhost:3000",
     ]
     
-    # ML Models path
-    MODELS_PATH: str = "./models/saved_models"
+    # ML Models path (point to ckd_project saved models folder)
+    # Default is computed relative to this file so it works regardless
+    # of the working directory used to start the server.
+    _default_models_path = str(Path(__file__).resolve().parents[3] / "ckd_project" / "models" / "saved_models")
+    MODELS_PATH: str = os.getenv("MODELS_PATH", _default_models_path)
     
     class Config:
         env_file = ".env"

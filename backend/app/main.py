@@ -6,7 +6,7 @@ from datetime import datetime
 from .core.config import get_settings
 from .db.database import init_db
 
-from .api.routes import auth, consultation, prediction, doctor, reports, patient
+from .api.routes import auth, consultation, prediction, doctor, reports, patient, ml
 
 settings = get_settings()
 
@@ -39,6 +39,7 @@ app.include_router(prediction.router)
 app.include_router(doctor.router)
 app.include_router(reports.router)
 app.include_router(patient.router)
+app.include_router(ml.router)
 
 if __name__ == "__main__":
     import uvicorn
