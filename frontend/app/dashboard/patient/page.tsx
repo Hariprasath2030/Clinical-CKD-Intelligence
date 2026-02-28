@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser } from "../../../services/authService";
-import { getProfile } from "../../../services/patientService";
+import { getProfile, createProfile } from "../../../services/patientService";
 import { getLabResults } from "../../../services/patientService";
 import ClinicalDataInput from "../../../components/ui/ClinicalDataInput";
 import { formatDate } from "../../../lib/utils";
@@ -12,6 +12,15 @@ export default function PatientDashboard() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [labResults, setLabResults] = useState<any[]>([]);
+  const [showProfileForm, setShowProfileForm] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    date_of_birth: "",
+    sex: "M",
+    height_cm: "",
+    weight_kg: "",
+    medical_history: "",
+    medications: "",
+  });
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -29,6 +38,7 @@ export default function PatientDashboard() {
           setLabResults(labResponse.data);
         } catch (err) {
           console.log("No profile or lab data yet");
+          setShowProfileForm(true);
         }
       } catch (err) {
         router.push("/auth/login");
@@ -75,8 +85,113 @@ export default function PatientDashboard() {
           <p className="mt-2 text-3xl font-semibold text-gray-900">
             {profile ? "Complete" : "Incomplete"}
           </p>
+          {!profile && (
+            <div className="mt-4">
+              <button
+                onClick={() => setShowProfileForm((s) => !s)}
+                className="inline-block rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
+              >
+                {showProfileForm ? "Close" : "Complete Profile"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {showProfileForm && !profile && (
+        <div className="bg-white rounded-lg shadow p-6 mb-8 max-w-md">
+          <h2 className="text-xl font-semibold mb-4">Complete Your Profile</h2>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                const payload = {
+                  date_of_birth: profileForm.date_of_birth,
+                  sex: profileForm.sex,
+                  height_cm: profileForm.height_cm ? Number(profileForm.height_cm) : undefined,
+                  weight_kg: profileForm.weight_kg ? Number(profileForm.weight_kg) : undefined,
+                  medical_history: profileForm.medical_history,
+                  medications: profileForm.medications,
+                };
+                const res = await createProfile(payload);
+                setProfile(res.data);
+                setShowProfileForm(false);
+              } catch (err) {
+                console.error(err);
+                alert("Failed to create profile");
+              }
+            }}
+            className="space-y-3"
+          >
+            <div>
+              <label className="block text-sm">Date of birth</label>
+              <input
+                type="date"
+                value={profileForm.date_of_birth}
+                onChange={(e) => setProfileForm((p) => ({ ...p, date_of_birth: e.target.value }))}
+                className="w-full mt-1 rounded border px-3 py-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm">Sex</label>
+              <select
+                value={profileForm.sex}
+                onChange={(e) => setProfileForm((p) => ({ ...p, sex: e.target.value }))}
+                className="w-full mt-1 rounded border px-3 py-2"
+              >
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm">Height (cm)</label>
+              <input
+                type="number"
+                value={profileForm.height_cm}
+                onChange={(e) => setProfileForm((p) => ({ ...p, height_cm: e.target.value }))}
+                className="w-full mt-1 rounded border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm">Weight (kg)</label>
+              <input
+                type="number"
+                value={profileForm.weight_kg}
+                onChange={(e) => setProfileForm((p) => ({ ...p, weight_kg: e.target.value }))}
+                className="w-full mt-1 rounded border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm">Medical history</label>
+              <input
+                type="text"
+                value={profileForm.medical_history}
+                onChange={(e) => setProfileForm((p) => ({ ...p, medical_history: e.target.value }))}
+                className="w-full mt-1 rounded border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm">Medications</label>
+              <input
+                type="text"
+                value={profileForm.medications}
+                onChange={(e) => setProfileForm((p) => ({ ...p, medications: e.target.value }))}
+                className="w-full mt-1 rounded border px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <button className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700">Save Profile</button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white rounded-lg shadow p-6">
