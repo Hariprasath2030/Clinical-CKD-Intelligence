@@ -29,7 +29,11 @@ export default function PatientDashboard() {
       try {
         const userResponse = await getCurrentUser();
         setUser(userResponse.data);
-
+        if (userResponse.data.role_id === 12) {
+          router.replace("/dashboard/doctor");
+        } else {
+          router.push("/dashboard/patient");
+        }
         try {
           const profileResponse = await getProfile();
           setProfile(profileResponse.data);
@@ -61,9 +65,9 @@ export default function PatientDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-950 to-gray-950">
+    <div className="min-h-screen bg-gradient-to-br from-black to-gray-950">
       <div className="mx-auto px-6 py-10 space-y-10">
-        <div className="bg-gradient-to-r from-gray-950 to-gray-900 text-white rounded-3xl p-8 shadow-xl border-gray-700 border">
+        <div className="bg-gradient-to-r from-black to-gray-950 text-white rounded-3xl p-8 shadow-xl border-gray-700 border">
           <h1 className="text-4xl font-bold tracking-tight">
             Welcome back, {user?.full_name} 👋
           </h1>
@@ -73,14 +77,14 @@ export default function PatientDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
+          <div className="bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
             <p className="text-sm text-gray-100">Total Lab Tests</p>
             <p className="mt-2 text-3xl font-bold text-gray-100">
               {labResults.length}
             </p>
           </div>
 
-          <div className="bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
+          <div className="bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
             <p className="text-sm text-gray-200">Latest Creatinine</p>
             <p className="mt-2 text-3xl font-bold text-gray-100">
               {labResults[0]?.serum_creatinine ?? "N/A"}
@@ -88,7 +92,7 @@ export default function PatientDashboard() {
             <span className="text-xs text-gray-200">mg/dL</span>
           </div>
 
-          <div className="bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
+          <div className="bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
             <p className="text-sm text-gray-200">BMI</p>
             <p className="mt-2 text-3xl font-bold text-gray-100">
               {profile?.height_cm && profile?.weight_kg
@@ -99,15 +103,15 @@ export default function PatientDashboard() {
             </p>
           </div>
 
-          <div className="bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
+          <div className="bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
             <p className="text-sm text-gray-500">Profile Status</p>
             <div className="mt-3">
               {profile ? (
-                <span className="px-3 py-1 text-sm rounded-full bg-green-100 text-green-700 font-medium">
-                  Complete
+                <span className="px-3 py-1 text-sm rounded-full bg-green-700 text-white font-medium">
+                  Completed
                 </span>
               ) : (
-                <span className="px-3 py-1 text-sm rounded-full bg-red-100 text-red-700 font-medium">
+                <span className="px-3 py-1 text-sm rounded-full bg-red-700 text-white font-medium">
                   Incomplete
                 </span>
               )}
@@ -247,7 +251,7 @@ export default function PatientDashboard() {
         {/* QUICK ACTIONS + LAB RESULTS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Quick Actions */}
-          <div className="bg-gray-900 rounded-3xl shadow-xl p-8 border-gray-700 border">
+          <div className="bg-gray-950 rounded-3xl shadow-xl p-8 border-gray-700 border">
             <h2 className="text-2xl font-bold mb-6 text-gray-100">
               Quick Actions
             </h2>
@@ -282,7 +286,7 @@ export default function PatientDashboard() {
           </div>
 
           {/* Recent Labs */}
-          <div className="bg-gray-900 rounded-3xl shadow-xl p-8 border-gray-700 border">
+          <div className="bg-gray-950 rounded-3xl shadow-xl p-8 border-gray-700 border">
             <h2 className="text-2xl font-bold mb-6 text-gray-100">
               Recent Lab Results
             </h2>

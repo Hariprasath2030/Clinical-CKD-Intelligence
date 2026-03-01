@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser } from "../../../services/authService";
 import api from "../../../lib/api";
-import { getCKDStageColor, formatDate } from "../../../lib/utils";
+import { formatDate } from "../../../lib/utils";
 
 export default function DoctorDashboard() {
   const [user, setUser] = useState<any>(null);
   const [patients, setPatients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function DoctorDashboard() {
 
         const patientsResponse = await api.get("/api/doctor/patients");
         setPatients(patientsResponse.data);
-      } catch (err) {
+      } catch {
         router.push("/auth/login");
       } finally {
         setLoading(false);
@@ -28,6 +29,22 @@ export default function DoctorDashboard() {
     }
     loadData();
   }, [router]);
+
+  const filteredPatients = useMemo(() => {
+    return patients.filter((p) =>
+      p.full_name.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [patients, search]);
+
+  const stats = {
+    total: patients.length,
+    highRisk: patients.filter(
+      (p) => p.risk_level === "high" || p.risk_level === "critical",
+    ).length,
+    stage45: patients.filter(
+      (p) => p.latest_ckd_stage === "4" || p.latest_ckd_stage === "5",
+    ).length,
+  };
 
   if (loading) {
     return (
@@ -41,95 +58,138 @@ export default function DoctorDashboard() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Doctor Dashboard</h1>
-        <p className="mt-2 text-gray-600">Welcome, Dr. {user?.full_name}</p>
+    <div className="min-h-screen bg-black px-6 py-10">
+      {/* HEADER */}
+      <div className="mb-10">
+        <h1 className="text-4xl font-bold text-gray-100">
+          👨‍⚕️ Doctor Dashboard
+        </h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500">Total Patients</h3>
-          <p className="mt-2 text-3xl font-semibold text-gray-900">{patients.length}</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500">High Risk</h3>
-          <p className="mt-2 text-3xl font-semibold text-red-600">
-            {patients.filter(p => p.risk_level === "high" || p.risk_level === "critical").length}
-          </p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-sm font-medium text-gray-500">Stage 4-5</h3>
-          <p className="mt-2 text-3xl font-semibold text-orange-600">
-            {patients.filter(p => p.latest_ckd_stage === "4" || p.latest_ckd_stage === "5").length}
-          </p>
-        </div>
+      {/* STATS */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <StatCard title="Total Patients" value={stats.total} color="blue" />
+        <StatCard title="High Risk" value={stats.highRisk} color="red" />
+        <StatCard title="Stage 4-5" value={stats.stage45} color="orange" />
       </div>
 
-      <div className="bg-white rounded-lg shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold">Patient List</h2>
-        </div>
+      {/* SEARCH */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search patients..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full md:w-96 px-4 py-2 rounded-xl border border-gray-800 focus:ring-2 focus:ring-blue-500 outline-none bg-slate-950"
+        />
+      </div>
 
-        {patients.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            No patients assigned yet
+      {/* TABLE */}
+      <div className="bg-gray-950 rounded-2xl shadow-lg overflow-hidden border-gray-800 border">
+        {filteredPatients.length === 0 ? (
+          <div className="p-16 text-center text-gray-200 text-lg">
+            🩺 No patients found
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Patient
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    CKD Stage
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    eGFR
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Risk Level
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Last Test
-                  </th>
+          <table className="min-w-full text-sm">
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+              <tr>
+                <th className="px-6 py-4 text-left">Patient</th>
+                <th className="px-6 py-4 text-left">CKD Stage</th>
+                <th className="px-6 py-4 text-left">eGFR</th>
+                <th className="px-6 py-4 text-left">Risk</th>
+                <th className="px-6 py-4 text-left">Last Test</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPatients.map((patient) => (
+                <tr
+                  key={patient.id}
+                  className="border-t hover:bg-gray-50 transition"
+                >
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {patient.full_name}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <StageBadge stage={patient.latest_ckd_stage} />
+                  </td>
+
+                  <td className="px-6 py-4 text-gray-600">
+                    {patient.latest_egfr?.toFixed(1) || "N/A"}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    <RiskBadge level={patient.risk_level} />
+                  </td>
+
+                  <td className="px-6 py-4 text-gray-600">
+                    {patient.latest_test_date
+                      ? formatDate(patient.latest_test_date)
+                      : "N/A"}
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {patients.map((patient) => (
-                  <tr key={patient.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {patient.full_name}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-${getCKDStageColor(patient.latest_ckd_stage)}-100 text-${getCKDStageColor(patient.latest_ckd_stage)}-800`}>
-                        Stage {patient.latest_ckd_stage || "N/A"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.latest_egfr?.toFixed(1) || "N/A"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`capitalize text-sm font-medium text-${patient.risk_level === "critical" ? "red" : patient.risk_level === "high" ? "orange" : patient.risk_level === "moderate" ? "yellow" : "green"}-600`}>
-                        {patient.risk_level || "N/A"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.latest_test_date ? formatDate(patient.latest_test_date) : "N/A"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>
+  );
+}
+
+/* ---------------- Components ---------------- */
+
+function StatCard({ title, value, color }: any) {
+  const colorMap: any = {
+    blue: "bg-blue-100 text-blue-700",
+    red: "bg-red-100 text-red-700",
+    orange: "bg-orange-100 text-orange-700",
+  };
+
+  return (
+    <div className="bg-gray-950 rounded-2xl shadow-md p-6 hover:shadow-xl transition border-gray-800 border">
+      <h3 className="text-gray-100 text-md">{title}</h3>
+      <div
+        className={`mt-4 text-3xl font-bold px-4 py-2 inline-block rounded-xl ${colorMap[color]}`}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function StageBadge({ stage }: any) {
+  const map: any = {
+    "1": "bg-green-100 text-green-700",
+    "2": "bg-green-100 text-green-700",
+    "3": "bg-yellow-100 text-yellow-700",
+    "4": "bg-orange-100 text-orange-700",
+    "5": "bg-red-100 text-red-700",
+  };
+
+  return (
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-semibold ${map[stage] || "bg-gray-200 text-gray-600"}`}
+    >
+      Stage {stage || "N/A"}
+    </span>
+  );
+}
+
+function RiskBadge({ level }: any) {
+  const map: any = {
+    low: "bg-green-100 text-green-700",
+    moderate: "bg-yellow-100 text-yellow-700",
+    high: "bg-orange-100 text-orange-700",
+    critical: "bg-red-100 text-red-700",
+  };
+
+  return (
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-semibold capitalize ${map[level] || "bg-gray-100 text-gray-600"}`}
+    >
+      {level || "N/A"}
+    </span>
   );
 }

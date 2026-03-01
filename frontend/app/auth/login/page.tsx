@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { login } from "../../../services/authService";
 import { saveToken } from "../../../lib/auth";
 import Link from "next/link";
+import { getToken } from "../../../lib/auth";
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -22,7 +24,12 @@ export default function LoginPage() {
     try {
       const resp = await login({ email, password });
       saveToken(resp.data.access_token);
-      router.push("/dashboard/patient");
+      const role = resp.data.user.role_id;
+      if (role === 12) {
+        router.replace("/dashboard/doctor");
+      } else {
+        router.push("/dashboard/patient");
+      }
     } catch {
       setError("Invalid email or password. Please try again.");
     } finally {
@@ -32,7 +39,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-neutral-950 to-black px-4">
-      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-zinc-800 rounded-2xl shadow-2xl p-8 text-white">
+      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-gray-800 rounded-2xl shadow-2xl p-8 text-white">
         <h1 className="text-3xl font-bold mb-2 text-center">Welcome Back</h1>
 
         <p className="text-center text-zinc-400 mb-6">

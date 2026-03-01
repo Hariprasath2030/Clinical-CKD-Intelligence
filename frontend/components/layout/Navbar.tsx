@@ -34,25 +34,38 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 backdrop-blur-lg bg-black border-b border-zinc-800">
       <div className="mx-auto px-6">
         <div className="flex justify-between items-center h-16">
-          <Link href="/" className="text-2xl font-bold text-white tracking-tight">
+          <Link
+            href="/"
+            className="text-2xl font-bold text-white tracking-tight"
+          >
             CKD <span className="text-blue-500">Intelligence</span>
           </Link>
 
           {user && (
             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-300">
               <Link
-                href={user.role_id === 1 ? "/dashboard/patient" : "/dashboard/doctor"}
+                href={
+                  user.role_id === 11
+                    ? "/dashboard/patient"
+                    : "/dashboard/doctor"
+                }
                 className="hover:text-white transition"
               >
                 Dashboard
               </Link>
 
-              {user.role_id && (
+              {user.role_id === 11 && (
                 <>
-                  <Link href="/consultation" className="hover:text-white transition">
+                  <Link
+                    href="/consultation"
+                    className="hover:text-white transition"
+                  >
                     Consultation
                   </Link>
-                  <Link href="/prediction" className="hover:text-white transition">
+                  <Link
+                    href="/prediction"
+                    className="hover:text-white transition"
+                  >
                     Prediction
                   </Link>
                   <Link href="/reports" className="hover:text-white transition">
@@ -120,14 +133,21 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link
-                  href={user.role_id === 1 ? "/dashboard/patient" : "/dashboard/doctor"}
+                  href={
+                    user.role_id === 11
+                      ? "/dashboard/patient"
+                      : "/dashboard/doctor"
+                  }
                   className="block hover:text-white"
                 >
                   Dashboard
                 </Link>
-                {user.role_id && (
+                {user.role_id === 11 && (
                   <>
-                    <Link href="/consultation" className="block hover:text-white">
+                    <Link
+                      href="/consultation"
+                      className="block hover:text-white"
+                    >
                       Consultation
                     </Link>
                     <Link href="/prediction" className="block hover:text-white">
