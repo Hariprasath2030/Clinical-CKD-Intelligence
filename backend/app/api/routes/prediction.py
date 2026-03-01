@@ -59,6 +59,9 @@ def create_prediction(
     db.add(prediction)
     db.commit()
     db.refresh(prediction)
+    # 🔥 AUTO REPORT GENERATION
+    from app.services.report_service import generate_report
+    generate_report(db, prediction)
     return schemas.PredictionResponse.from_orm(prediction)
 
 @router.get("/{prediction_id}", response_model=schemas.PredictionResponse)
