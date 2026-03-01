@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { register } from "../../../services/authService";
 import { saveToken } from "../../../lib/auth";
+import Link from "next/link";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -12,136 +13,166 @@ export default function RegisterPage() {
     full_name: "",
     role_name: "patient",
   });
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+    setLoading(true);
 
     try {
       const response = await register(formData);
       saveToken(response.data.access_token);
 
-      if (formData.role_name === "patient") {
-        router.push("/dashboard/patient");
-      } else {
-        router.push("/dashboard/doctor");
-      }
+      router.push(
+        formData.role_name === "patient"
+          ? "/dashboard/patient"
+          : "/dashboard/doctor",
+      );
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Registration failed. Please try again.");
+      setError(
+        err.response?.data?.detail || "Registration failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Create your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Join CKD Intelligence
-          </p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-neutral-950 to-black px-4">
+      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-zinc-800 rounded-2xl shadow-2xl p-8 text-white">
+        <h1 className="text-3xl font-bold text-center mb-2">Create Account</h1>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-sm text-red-800">{error}</p>
-            </div>
-          )}
+        <p className="text-center text-zinc-400 mb-6">
+          Join CKD Intelligence Platform
+        </p>
 
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">
-                Full Name
-              </label>
+        {error && (
+          <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/30 px-4 py-2 text-sm text-red-400">
+            {error}
+          </div>
+        )}
+
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          {/* Full Name */}
+          <div>
+            <label className="block text-sm mb-1 text-zinc-400">
+              Full Name
+            </label>
+            <input
+              name="full_name"
+              type="text"
+              required
+              value={formData.full_name}
+              onChange={handleChange}
+              className="w-full rounded-lg bg-neutral-900 border border-zinc-700 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+              placeholder="John Doe"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-sm mb-1 text-zinc-400">
+              Email Address
+            </label>
+            <input
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full rounded-lg bg-neutral-900 border border-zinc-700 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm mb-1 text-zinc-400">Password</label>
+
+            <div className="relative">
               <input
-                id="full_name"
-                name="full_name"
-                type="text"
-                required
-                value={formData.full_name}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                placeholder="John Doe"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                placeholder="you@example.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                placeholder="Min 8 characters"
+                className="w-full rounded-lg bg-neutral-900 border border-zinc-700 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
+                placeholder="Minimum 8 characters"
               />
-            </div>
 
-            <div>
-              <label htmlFor="role_name" className="block text-sm font-medium text-gray-700">
-                Role
-              </label>
-              <select
-                id="role_name"
-                name="role_name"
-                value={formData.role_name}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2 text-sm text-zinc-400 hover:text-white"
               >
-                <option value="patient">Patient</option>
-                <option value="doctor">Doctor</option>
-              </select>
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
           </div>
 
+          {/* Role Selection */}
           <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Creating account..." : "Register"}
-            </button>
+            <label className="block text-sm mb-3 text-zinc-400">
+              Select Role
+            </label>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, role_name: "patient" })
+                }
+                className={`rounded-xl border p-4 text-sm transition ${
+                  formData.role_name === "patient"
+                    ? "border-blue-500 bg-blue-600/10 text-white"
+                    : "border-zinc-700 text-zinc-400 hover:border-zinc-500"
+                }`}
+              >
+                🧍 Patient
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, role_name: "doctor" })
+                }
+                className={`rounded-xl border p-4 text-sm transition ${
+                  formData.role_name === "doctor"
+                    ? "border-green-500 bg-green-600/10 text-white"
+                    : "border-zinc-700 text-zinc-400 hover:border-zinc-500"
+                }`}
+              >
+                🩺 Doctor
+              </button>
+            </div>
           </div>
 
-          <div className="text-center">
-            <a href="/auth/login" className="text-sm text-blue-600 hover:text-blue-500">
-              Already have an account? Log in
-            </a>
-          </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 transition py-2 font-semibold shadow-lg shadow-blue-600/30 disabled:opacity-70"
+          >
+            {loading ? "Creating account..." : "Create Account"}
+          </button>
         </form>
+
+        <p className="text-sm text-center text-zinc-400 mt-6">
+          Already have an account?{" "}
+          <Link href="/auth/login" className="text-blue-500 hover:underline">
+            Log in
+          </Link>
+        </p>
       </div>
     </div>
   );

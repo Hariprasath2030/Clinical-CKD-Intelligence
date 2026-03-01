@@ -6,11 +6,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
+return (
     <html lang="en">
-      <body>
+      <body className="bg-black">
         <Navbar />
-        <main className="container mx-auto px-4 py-8">{children}</main>
+        <main className="container mx-auto bg-black">{children}</main>
       </body>
     </html>
   );
