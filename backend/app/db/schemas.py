@@ -119,6 +119,9 @@ class PredictionResponse(BaseModel):
     top_contributing_features: List[Dict[str, Any]]
     model_version: str
 
+    class Config:
+        from_attributes = True
+
 
 # ============== Doctor Schemas ==============
 class DoctorPatientResponse(BaseModel):

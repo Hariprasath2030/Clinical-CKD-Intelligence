@@ -1,7 +1,5 @@
 "use client";
 
-// This component now expects the raw prediction object returned from backend
-// so we can display fields without remapping at the call site.
 interface PredictionResult {
   egfr_predicted: number;
   ckd_stage: string;
@@ -15,66 +13,132 @@ interface Props {
   result: PredictionResult;
 }
 
-const stageConfig: Record<
+const stageStyles: Record<
   string,
-  { bg: string; text: string; recommendation: string }
+  { text: string; bg: string; border: string }
 > = {
   "1": {
-    bg: "bg-green-100",
-    text: "text-green-900",
-    recommendation:
-      "Your kidney function is normal. Continue healthy lifestyle practices.",
+    text: "text-green-400",
+    bg: "bg-green-500/10",
+    border: "border-green-500/30",
   },
   "2": {
-    bg: "bg-yellow-100",
-    text: "text-yellow-900",
-    recommendation:
-      "Mildly reduced kidney function. Monitor regularly and consult your doctor.",
+    text: "text-yellow-400",
+    bg: "bg-yellow-500/10",
+    border: "border-yellow-500/30",
   },
   "3": {
-    bg: "bg-orange-100",
-    text: "text-orange-900",
-    recommendation:
-      "Moderately reduced kidney function. Follow your doctor's guidance closely.",
+    text: "text-orange-400",
+    bg: "bg-orange-500/10",
+    border: "border-orange-500/30",
   },
   "4": {
-    bg: "bg-red-100",
-    text: "text-red-900",
-    recommendation:
-      "Severely reduced kidney function. Urgent consultation needed.",
+    text: "text-red-400",
+    bg: "bg-red-500/10",
+    border: "border-red-500/30",
   },
   "5": {
-    bg: "bg-red-200",
-    text: "text-red-950",
-    recommendation: "Kidney failure. Immediate medical attention required.",
+    text: "text-red-600",
+    bg: "bg-red-600/10",
+    border: "border-red-600/40",
   },
 };
 
 export default function PredictionResults({ result }: Props) {
-  // translate API fields into the stage key and display values
   const stage = result.ckd_stage;
-  const config = stageConfig[stage] || stageConfig["1"];
+  const risk = result.risk_level?.toLowerCase();
+  const confidencePercent = (result.egfr_confidence * 100).toFixed(1);
+
+  const style = stageStyles[stage] || stageStyles["1"];
+
+  const circumference = 2 * Math.PI * 40;
+  const offset = circumference * (1 - Number(confidencePercent) / 100);
 
   return (
-    <div className={`rounded-lg p-6 ${config.bg} ${config.text}`}>
-      <h2 className="text-2xl font-semibold">Prediction Results</h2>
-      <div className="mt-4 space-y-2">
-        <p>
-          <strong>Predicted eGFR:</strong> {result.egfr_predicted.toFixed(2)}{" "}
-          mL/min/1.73m²
-        </p>
-        <p>
-          <strong>CKD Stage:</strong> Stage {stage}
-        </p>
-        <p>
-          <strong>Confidence:</strong>{" "}
-          {(result.egfr_confidence * 100).toFixed(1)}%
-        </p>
-        <p>
-          <strong>Risk Level:</strong> {result.risk_level}
+    <div
+      className={`rounded-3xl p-8 border ${style.bg} ${style.border} transition-all`}
+    >
+      {/* HEADER */}
+      <h2 className="text-2xl font-semibold mb-8">🧬 AI Prediction Summary</h2>
+
+      {/* eGFR SECTION */}
+      <div className="mb-10">
+        <p className="text-gray-400 text-sm mb-2">Predicted eGFR</p>
+        <p className="text-4xl font-bold text-cyan-400">
+          {result.egfr_predicted.toFixed(2)}
+          <span className="text-lg ml-2 text-gray-500">mL/min/1.73m²</span>
         </p>
       </div>
-      <p className="mt-4">{config.recommendation}</p>
+
+      {/* STAGE + RISK GRID */}
+      <div className="grid grid-cols-2 gap-10 items-start mb-10">
+        {/* Stage */}
+        <div className="space-y-2">
+          <p className="text-gray-400 text-sm">CKD Stage</p>
+          <p className={`text-2xl font-bold ${style.text}`}>Stage {stage}</p>
+        </div>
+
+        {/* Risk */}
+        <div className="space-y-2">
+          <p className="text-gray-400 text-sm">Risk Level</p>
+          <span
+            className={`inline-block px-4 py-1 rounded-full text-sm font-semibold capitalize
+              ${
+                risk === "low"
+                  ? "bg-green-500/20 text-green-400"
+                  : risk === "moderate"
+                    ? "bg-yellow-500/20 text-yellow-400"
+                    : "bg-red-500/20 text-red-400"
+              }`}
+          >
+            {result.risk_level}
+          </span>
+        </div>
+      </div>
+
+      {/* CONFIDENCE RING */}
+      <div className="flex items-center gap-8">
+        <div className="relative w-24 h-24">
+          <svg className="transform -rotate-90 w-24 h-24">
+            <circle
+              cx="48"
+              cy="48"
+              r="40"
+              stroke="gray"
+              strokeWidth="8"
+              fill="transparent"
+            />
+            <circle
+              cx="48"
+              cy="48"
+              r="40"
+              stroke="cyan"
+              strokeWidth="8"
+              fill="transparent"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              strokeLinecap="round"
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center text-lg font-semibold">
+            {confidencePercent}%
+          </div>
+        </div>
+
+        <div>
+          <p className="text-gray-400 text-sm mb-2">Model Confidence</p>
+          <p className="text-gray-300 text-sm">
+            Higher percentage indicates stronger prediction reliability.
+          </p>
+        </div>
+      </div>
+
+      {/* CLINICAL GUIDANCE */}
+      {result.clinical_guidance && (
+        <div className="mt-10 pt-6 border-t border-gray-700 text-gray-300">
+          {result.clinical_guidance}
+        </div>
+      )}
     </div>
   );
 }
