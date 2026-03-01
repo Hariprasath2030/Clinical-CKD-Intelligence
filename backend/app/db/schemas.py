@@ -118,8 +118,36 @@ class PredictionResponse(BaseModel):
     shap_values: Dict[str, Any]
     top_contributing_features: List[Dict[str, Any]]
     model_version: str
+
+
+# ============== Doctor Schemas ==============
+class DoctorPatientResponse(BaseModel):
+    id: int
+    full_name: str
+    date_of_birth: Optional[datetime] = None
+    sex: Optional[str] = None
+    height_cm: Optional[float] = None
+    weight_kg: Optional[float] = None
+    medical_history: Optional[str] = None
+    medications: Optional[str] = None
     created_at: datetime
-    
+    updated_at: datetime
+
+    # latest prediction details (may be null)
+    latest_ckd_stage: Optional[str] = None
+    latest_egfr: Optional[float] = None
+    latest_test_date: Optional[datetime] = None
+    risk_level: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class DoctorPatientsListResponse(BaseModel):
+    """Wrapper containing a message plus the list of patients returned to a doctor."""
+    message: str
+    patients: List[DoctorPatientResponse]
+
     class Config:
         from_attributes = True
 

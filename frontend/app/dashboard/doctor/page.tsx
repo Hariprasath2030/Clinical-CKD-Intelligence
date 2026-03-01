@@ -20,7 +20,7 @@ export default function DoctorDashboard() {
         setUser(userResponse.data);
 
         const patientsResponse = await api.get("/api/doctor/patients");
-        setPatients(patientsResponse.data);
+        setPatients(patientsResponse.data.patients);
       } catch {
         router.push("/auth/login");
       } finally {
@@ -60,10 +60,26 @@ export default function DoctorDashboard() {
   return (
     <div className="min-h-screen bg-black px-6 py-10">
       {/* HEADER */}
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold text-gray-100">
-          👨‍⚕️ Doctor Dashboard
-        </h1>
+      {/* HEADER */}
+      <div className="relative mb-12 overflow-hidden rounded-3xl border border-gray-800 bg-gradient-to-br from-gray-950 via-black to-gray-950 p-8 shadow-[0_0_60px_rgba(59,130,246,0.08)]">
+        {/* Glow Effects */}
+        <div className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-purple-500/10 blur-3xl" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          {/* Left Section */}
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r text-white from-blue-400 to-cyan-300 bg-clip-text ">
+              👨‍⚕️ Doctor Dashboard
+            </h1>
+            <p className="mt-3 text-gray-400 text-lg">
+              Welcome back,{" "}
+              <span className="text-white font-semibold">
+                Dr. {user?.full_name}
+              </span>
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* STATS */}
@@ -85,14 +101,14 @@ export default function DoctorDashboard() {
       </div>
 
       {/* TABLE */}
-      <div className="bg-gray-950 rounded-2xl shadow-lg overflow-hidden border-gray-800 border">
+      <div className="bg-gray-950 rounded-2xl shadow-2xl overflow-hidden border border-gray-800">
         {filteredPatients.length === 0 ? (
-          <div className="p-16 text-center text-gray-200 text-lg">
-            🩺 No patients found
+          <div className="p-16 text-center text-gray-400 text-lg">
+            🩺 No patients assigned yet
           </div>
         ) : (
           <table className="min-w-full text-sm">
-            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+            <thead className="bg-gray-900 text-gray-400 uppercase text-xs border-b border-gray-800">
               <tr>
                 <th className="px-6 py-4 text-left">Patient</th>
                 <th className="px-6 py-4 text-left">CKD Stage</th>
@@ -101,13 +117,14 @@ export default function DoctorDashboard() {
                 <th className="px-6 py-4 text-left">Last Test</th>
               </tr>
             </thead>
+
             <tbody>
               {filteredPatients.map((patient) => (
                 <tr
                   key={patient.id}
-                  className="border-t hover:bg-gray-50 transition"
+                  className="border-b border-gray-800 hover:bg-gray-900/60 transition"
                 >
-                  <td className="px-6 py-4 font-medium text-gray-900">
+                  <td className="px-6 py-4 font-medium text-white">
                     {patient.full_name}
                   </td>
 
@@ -115,15 +132,17 @@ export default function DoctorDashboard() {
                     <StageBadge stage={patient.latest_ckd_stage} />
                   </td>
 
-                  <td className="px-6 py-4 text-gray-600">
-                    {patient.latest_egfr?.toFixed(1) || "N/A"}
+                  <td className="px-6 py-4 text-gray-300">
+                    {patient.latest_egfr
+                      ? patient.latest_egfr.toFixed(1)
+                      : "N/A"}
                   </td>
 
                   <td className="px-6 py-4">
                     <RiskBadge level={patient.risk_level} />
                   </td>
 
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-6 py-4 text-gray-400">
                     {patient.latest_test_date
                       ? formatDate(patient.latest_test_date)
                       : "N/A"}
@@ -139,19 +158,18 @@ export default function DoctorDashboard() {
 }
 
 /* ---------------- Components ---------------- */
-
 function StatCard({ title, value, color }: any) {
   const colorMap: any = {
-    blue: "bg-blue-100 text-blue-700",
-    red: "bg-red-100 text-red-700",
-    orange: "bg-orange-100 text-orange-700",
+    blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    red: "bg-red-500/10 text-red-400 border-red-500/20",
+    orange: "bg-orange-500/10 text-orange-400 border-orange-500/20",
   };
 
   return (
-    <div className="bg-gray-950 rounded-2xl shadow-md p-6 hover:shadow-xl transition border-gray-800 border">
-      <h3 className="text-gray-100 text-md">{title}</h3>
+    <div className="bg-gray-950 rounded-2xl p-6 border border-gray-800 hover:border-gray-700 transition shadow-xl">
+      <h3 className="text-gray-400 text-sm">{title}</h3>
       <div
-        className={`mt-4 text-3xl font-bold px-4 py-2 inline-block rounded-xl ${colorMap[color]}`}
+        className={`mt-4 text-3xl font-bold px-4 py-2 inline-block rounded-xl border ${colorMap[color]}`}
       >
         {value}
       </div>
