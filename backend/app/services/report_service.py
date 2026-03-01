@@ -1,10 +1,12 @@
 from sqlalchemy.orm import Session
 from ..db import models
 from datetime import datetime
-import os
+from io import BytesIO
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.units import inch
+from fastapi.responses import StreamingResponse
+
 
 def list_reports(db: Session, user_id: int):
     return db.query(models.Report).filter(models.Report.generated_by_user_id == user_id).all()
@@ -16,7 +18,7 @@ def get_report(db: Session, report_id: int):
 
 def generate_report(db: Session, prediction: models.Prediction):
     """
-    Auto-generate AI clinical report from prediction
+    Generate AI clinical report in memory for download (no local file creation)
     """
 
     title = f"CKD Clinical Report - Stage {prediction.ckd_stage}"
@@ -38,31 +40,26 @@ def generate_report(db: Session, prediction: models.Prediction):
 
     recommendations = "\n".join(prediction.recommendations)
 
-    # 🔥 Create reports folder if it doesn't exist
-    os.makedirs("reports", exist_ok=True)
-    pdf_path = f"reports/report_{prediction.id}.pdf"
-
-    # 🔥 Build PDF
-    doc = SimpleDocTemplate(pdf_path)
+    # 🔥 Generate PDF in memory
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer)
     elements = []
     styles = getSampleStyleSheet()
 
     elements.append(Paragraph(title, styles["Heading1"]))
     elements.append(Spacer(1, 0.2 * inch))
-
     elements.append(Paragraph(summary, styles["Normal"]))
     elements.append(Spacer(1, 0.2 * inch))
-
     elements.append(Paragraph("Clinical Analysis:", styles["Heading2"]))
     elements.append(Paragraph(detailed_analysis.replace("\n", "<br/>"), styles["Normal"]))
     elements.append(Spacer(1, 0.2 * inch))
-
     elements.append(Paragraph("Recommendations:", styles["Heading2"]))
     elements.append(Paragraph(recommendations.replace("\n", "<br/>"), styles["Normal"]))
 
     doc.build(elements)
+    buffer.seek(0)
 
-    # 🔥 Save to DB with pdf_path
+    # 🔥 Optional: still save report metadata in DB without pdf_path
     report = models.Report(
         prediction_id=prediction.id,
         generated_by_user_id=prediction.patient.user_id,
@@ -70,7 +67,7 @@ def generate_report(db: Session, prediction: models.Prediction):
         summary=summary,
         detailed_analysis=detailed_analysis,
         recommendations=recommendations,
-        pdf_path=pdf_path,
+        pdf_path=None,  # No file path saved
         created_at=datetime.utcnow()
     )
 
@@ -78,4 +75,9 @@ def generate_report(db: Session, prediction: models.Prediction):
     db.commit()
     db.refresh(report)
 
-    return report
+    # 🔥 Return a StreamingResponse for direct download
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=ckd_report_{prediction.id}.pdf"}
+    )
