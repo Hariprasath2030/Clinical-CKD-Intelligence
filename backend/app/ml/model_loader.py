@@ -226,12 +226,12 @@ class MLModelService:
         Returns: dict with feature names and importance values
         """
         try:
-            model = self.models.get('classifier')
-            if model is None:
-                # no classifier available yet
-                return {}
+            model = self.models.get('regression')
+            scaler = self.models.get('scaler_regression')
+            if model is None or scaler is None:
+                  return {}
 
-            feature_array = self.preprocess_features(features, 'classification')
+            feature_array = self.preprocess_features(features, 'regression')
             if feature_array is None:
                 return {}
 

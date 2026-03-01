@@ -77,14 +77,14 @@ export default function PatientDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
+          <div className="bg-black rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
             <p className="text-sm text-gray-100">Total Lab Tests</p>
             <p className="mt-2 text-3xl font-bold text-gray-100">
               {labResults.length}
             </p>
           </div>
 
-          <div className="bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
+          <div className="bg-black rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
             <p className="text-sm text-gray-200">Latest Creatinine</p>
             <p className="mt-2 text-3xl font-bold text-gray-100">
               {labResults[0]?.serum_creatinine ?? "N/A"}
@@ -92,7 +92,7 @@ export default function PatientDashboard() {
             <span className="text-xs text-gray-200">mg/dL</span>
           </div>
 
-          <div className="bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
+          <div className="bg-black rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
             <p className="text-sm text-gray-200">BMI</p>
             <p className="mt-2 text-3xl font-bold text-gray-100">
               {profile?.height_cm && profile?.weight_kg
@@ -103,7 +103,7 @@ export default function PatientDashboard() {
             </p>
           </div>
 
-          <div className="bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
+          <div className="bg-black rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
             <p className="text-sm text-gray-500">Profile Status</p>
             <div className="mt-3">
               {profile ? (
@@ -131,7 +131,7 @@ export default function PatientDashboard() {
         {showProfileForm && !profile && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black backdrop-blur-sm">
             {/* Modal Card */}
-            <div className="relative w-full max-w-xl rounded-3xl border border-gray-700 bg-gray-950 p-8 shadow-2xl animate-fadeIn">
+            <div className="relative w-full max-w-xl rounded-3xl border border-gray-700 bg-black p-8 shadow-2xl animate-fadeIn">
               {/* Close Button */}
               <button
                 onClick={() => setShowProfileForm(false)}
@@ -251,7 +251,7 @@ export default function PatientDashboard() {
         {/* QUICK ACTIONS + LAB RESULTS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Quick Actions */}
-          <div className="bg-gray-950 rounded-3xl shadow-xl p-8 border-gray-700 border">
+          <div className="bg-black rounded-3xl shadow-xl p-8 border-gray-700 border">
             <h2 className="text-2xl font-bold mb-6 text-gray-100">
               Quick Actions
             </h2>
@@ -272,7 +272,7 @@ export default function PatientDashboard() {
                 <a
                   key={i}
                   href={item.href}
-                  className="block p-5 rounded-2xl bg-gray-800 hover:bg-gray-700 transition shadow-sm"
+                  className="block p-5 rounded-2xl bg-gray-950 hover:bg-gray-800 transition shadow-sm border-gray-800 border"
                 >
                   <h3 className="font-semibold text-lg text-gray-100">
                     {item.title}
@@ -286,7 +286,7 @@ export default function PatientDashboard() {
           </div>
 
           {/* Recent Labs */}
-          <div className="bg-gray-950 rounded-3xl shadow-xl p-8 border-gray-700 border">
+          <div className="bg-black rounded-3xl shadow-xl p-8 border-gray-700 border">
             <h2 className="text-2xl font-bold mb-6 text-gray-100">
               Recent Lab Results
             </h2>

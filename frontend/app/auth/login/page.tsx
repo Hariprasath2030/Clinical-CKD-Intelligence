@@ -27,8 +27,10 @@ export default function LoginPage() {
       const role = resp.data.user.role_id;
       if (role === 12) {
         router.replace("/dashboard/doctor");
+        window.location.reload();
       } else {
         router.push("/dashboard/patient");
+        window.location.reload();
       }
     } catch {
       setError("Invalid email or password. Please try again.");
