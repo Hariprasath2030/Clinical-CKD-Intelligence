@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { getCurrentUser } from "../../../services/authService";
 import { getProfile, createProfile } from "../../../services/patientService";
 import { getLabResults } from "../../../services/patientService";
-import ClinicalDataInput from "../../../components/ui/ClinicalDataInput";
 import { formatDate } from "../../../lib/utils";
 
 export default function PatientDashboard() {
@@ -77,34 +76,58 @@ export default function PatientDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-black rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
-            <p className="text-sm text-gray-100">Total Lab Tests</p>
-            <p className="mt-2 text-3xl font-bold text-gray-100">
+          {/* Total Lab Tests */}
+          <div className="relative bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border border-gray-700 overflow-hidden group">
+            <div className="absolute top-0 right-0 w-2 h-full bg-blue-500 rounded-l-2xl"></div>
+            <p className="text-sm text-gray-400 uppercase tracking-wide">
+              Total Lab Tests
+            </p>
+            <p className="mt-2 text-3xl font-bold text-white">
               {labResults.length}
             </p>
+            <span className="text-xs text-gray-400">records</span>
+            <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+              🧪
+            </div>
           </div>
 
-          <div className="bg-black rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
-            <p className="text-sm text-gray-200">Latest Creatinine</p>
-            <p className="mt-2 text-3xl font-bold text-gray-100">
+          {/* Latest Creatinine */}
+          <div className="relative bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border border-gray-700 overflow-hidden group">
+            <div className="absolute top-0 right-0 w-2 h-full bg-red-500 rounded-l-2xl"></div>
+            <p className="text-sm text-gray-400 uppercase tracking-wide">
+              Latest Creatinine
+            </p>
+            <p className="mt-2 text-3xl font-bold text-white">
               {labResults[0]?.serum_creatinine ?? "N/A"}
             </p>
-            <span className="text-xs text-gray-200">mg/dL</span>
+            <span className="text-xs text-gray-400">mg/dL</span>
+            <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+              🩺
+            </div>
           </div>
 
-          <div className="bg-black rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
-            <p className="text-sm text-gray-200">BMI</p>
-            <p className="mt-2 text-3xl font-bold text-gray-100">
+          {/* BMI */}
+          <div className="relative bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border border-gray-700 overflow-hidden group">
+            <div className="absolute top-0 right-0 w-2 h-full bg-green-500 rounded-l-2xl"></div>
+            <p className="text-sm text-gray-400 uppercase tracking-wide">BMI</p>
+            <p className="mt-2 text-3xl font-bold text-white">
               {profile?.height_cm && profile?.weight_kg
                 ? (
                     profile.weight_kg / Math.pow(profile.height_cm / 100, 2)
                   ).toFixed(1)
                 : "N/A"}
             </p>
+            <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+              ⚖️
+            </div>
           </div>
 
-          <div className="bg-black rounded-2xl shadow-md hover:shadow-xl transition p-6 border-gray-700 border">
-            <p className="text-sm text-gray-500">Profile Status</p>
+          {/* Profile Status */}
+          <div className="relative bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border border-gray-700 overflow-hidden group">
+            <div className="absolute top-0 right-0 w-2 h-full bg-yellow-500 rounded-l-2xl"></div>
+            <p className="text-sm text-gray-400 uppercase tracking-wide">
+              Profile Status
+            </p>
             <div className="mt-3">
               {profile ? (
                 <span className="px-3 py-1 text-sm rounded-full bg-green-700 text-white font-medium">
@@ -125,10 +148,13 @@ export default function PatientDashboard() {
                 {showProfileForm ? "Close Form" : "Complete Profile"}
               </button>
             )}
+            <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+              👤
+            </div>
           </div>
         </div>
 
-        {showProfileForm && !profile && (
+        {showProfileForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black backdrop-blur-sm">
             {/* Modal Card */}
             <div className="relative w-full max-w-xl rounded-3xl border border-gray-700 bg-black p-8 shadow-2xl animate-fadeIn">
@@ -250,71 +276,141 @@ export default function PatientDashboard() {
 
         {/* QUICK ACTIONS + LAB RESULTS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Quick Actions */}
-          <div className="bg-black rounded-3xl shadow-xl p-8 border-gray-700 border">
-            <h2 className="text-2xl font-bold mb-6 text-gray-100">
-              Quick Actions
+          <div className="bg-black rounded-3xl shadow-2xl p-8 border border-gray-700">
+            <h2 className="text-3xl font-extrabold mb-6 text-white">
+              ⚡ Quick Actions
             </h2>
-            <div className="space-y-4">
+
+            <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
                   href: "/consultation",
                   title: "Voice Consultation",
+                  description: "Talk to AI-assisted doctor instantly",
                   color: "blue",
+                  icon: "🎤",
                 },
                 {
                   href: "/prediction",
                   title: "CKD Prediction",
-                  color: "green",
+                  description: "Run risk analysis on lab data",
+                  color: "blue",
+                  icon: "🔬",
                 },
-                { href: "/reports", title: "Medical Reports", color: "purple" },
+                {
+                  href: "/reports",
+                  title: "Medical Reports",
+                  description: "View patient history & reports",
+                  color: "blue",
+                  icon: "📄",
+                },
               ].map((item, i) => (
                 <a
                   key={i}
                   href={item.href}
-                  className="block p-5 rounded-2xl bg-gray-950 hover:bg-gray-800 transition shadow-sm border-gray-800 border"
+                  className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-gray-950 hover:bg-gray-800 transition-transform transform hover:scale-105 shadow-lg border border-gray-800 overflow-hidden`}
                 >
-                  <h3 className="font-semibold text-lg text-gray-100">
+                  <span
+                    className={`absolute left-0 top-0 h-full w-2 rounded-l-2xl bg-${item.color}-500`}
+                  />
+
+                  {/* Icon */}
+                  <div className="text-4xl mb-4">{item.icon}</div>
+
+                  <h3 className="text-xl font-semibold text-white group-hover:text-${item.color}-400">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Access this feature instantly
+                  <p className="text-gray-400 mt-1 text-sm">
+                    {item.description}
                   </p>
+
+                  <div className="absolute inset-0 bg-${item.color}-500/10 opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity"></div>
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Recent Labs */}
-          <div className="bg-black rounded-3xl shadow-xl p-8 border-gray-700 border">
-            <h2 className="text-2xl font-bold mb-6 text-gray-100">
-              Recent Lab Results
+          <div className="bg-black rounded-3xl shadow-2xl p-8 border border-gray-700">
+            <h2 className="text-3xl font-extrabold mb-6 text-white">
+              🧪 Recent Lab Results
             </h2>
+
             {labResults.length === 0 ? (
-              <p className="text-gray-500 text-center py-10">
-                No lab results yet
+              <p className="text-gray-400 text-center py-10 italic">
+                No lab results recorded yet.
               </p>
             ) : (
               <div className="space-y-4">
-                {labResults.slice(0, 5).map((result, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition"
-                  >
-                    <div>
-                      <p className="font-semibold">
-                        {formatDate(result.test_date)}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Creatinine: {result.serum_creatinine} mg/dL
-                      </p>
+                {labResults.slice(0, 5).map((result, index) => {
+                  const creatinineLevel = result.serum_creatinine;
+                  const riskColor =
+                    creatinineLevel < 1.2
+                      ? "bg-green-500/20 text-green-400"
+                      : creatinineLevel < 2
+                        ? "bg-yellow-500/20 text-yellow-400"
+                        : "bg-red-500/20 text-red-400";
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex flex-col md:flex-row justify-between items-start md:items-center p-5 rounded-2xl bg-gray-950 hover:bg-gray-700 transition-all border border-gray-700 shadow-md"
+                    >
+                      <div className="flex-1">
+                        <p className="text-lg font-semibold text-white">
+                          Date: {formatDate(result.test_date)}
+                        </p>
+                        <p className="text-sm text-gray-400 mt-1">
+                          Creatinine:{" "}
+                          <span
+                            className={`font-bold px-2 py-1 rounded-full ${riskColor}`}
+                          >
+                            {result.serum_creatinine} mg/dL
+                          </span>
+                        </p>
+                      </div>
+
+                      <div className="flex-1 mt-3 md:mt-0 md:text-center">
+                        <p className="text-sm text-gray-400">
+                          BP:{" "}
+                          <span className="font-medium text-white">
+                            {result.blood_pressure_sys}/
+                            {result.blood_pressure_dia} mmHg
+                          </span>
+                        </p>
+                        {result.albumin && (
+                          <p className="text-sm text-gray-400 mt-1">
+                            Albumin:{" "}
+                            <span className="font-medium text-white">
+                              {result.albumin} g/dL
+                            </span>
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Right: Notes / Mini Badge */}
+                      <div className="flex-1 mt-3 md:mt-0 md:text-right">
+                        {result.notes ? (
+                          <p className="text-sm text-gray-300 italic truncate max-w-xs">
+                            "{result.notes}"
+                          </p>
+                        ) : (
+                          <span className="text-sm text-gray-500">
+                            No notes
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-500">
-                      BP: {result.blood_pressure_sys}/
-                      {result.blood_pressure_dia}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
+              </div>
+            )}
+
+            {/* View All Button */}
+            {labResults.length > 5 && (
+              <div className="mt-6 text-center">
+                <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg transition">
+                  View All Lab Results
+                </button>
               </div>
             )}
           </div>

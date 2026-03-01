@@ -6,6 +6,7 @@ import ClinicalDataInput from "../../components/ui/ClinicalDataInput";
 import PredictionResults from "../../components/ui/PredictionResults";
 import ShapChart from "../../components/charts/ShapChart";
 import { useEffect } from "react";
+import { submitLabResults } from "../../services/patientService";
 
 export default function PredictionPage() {
   const [prediction, setPrediction] = useState<any>(null);
@@ -32,24 +33,18 @@ export default function PredictionPage() {
     try {
       const payload = {
         test_date: new Date().toISOString(),
-
         age: Number(formData.age),
         sex: formData.sex,
-
         bmi: Number(formData.bmi),
-
         serum_creatinine: Number(formData.serumCreatinine),
         cystatin_c: Number(formData.cystatinC) || null,
-
         hba1c: Number(formData.hba1c),
-
         blood_pressure_sys: Number(formData.systolicBP),
         blood_pressure_dia: Number(formData.diastolicBP),
-
         albumin: Number(formData.albumin),
         crp: Number(formData.crp),
       };
-
+      await submitLabResults(payload);
       const response = await runPrediction(payload);
       setPrediction(response.data);
     } catch (err: any) {
