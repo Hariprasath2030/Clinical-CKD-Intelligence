@@ -26,11 +26,15 @@ export default function LoginPage() {
       saveToken(resp.data.access_token);
       const role = resp.data.user.role_id;
       if (role === 12) {
-        router.replace("/dashboard/doctor");
-        window.location.reload();
+        router.push("/dashboard/doctor");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         router.push("/dashboard/patient");
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
     } catch {
       setError("Invalid email or password. Please try again.");
