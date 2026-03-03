@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getReports, downloadReport } from "../../services/reportService";
 import { formatDate, formatDateTime } from "../../lib/utils";
+import { toast } from "sonner";
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<any[]>([]);
@@ -19,6 +20,7 @@ export default function ReportsPage() {
         setReports(data);
         setFilteredReports(data);
       } catch (err) {
+        toast.error("Failed to load reports");
         console.error("Failed to load reports", err);
       } finally {
         setLoading(false);
@@ -45,7 +47,9 @@ export default function ReportsPage() {
       document.body.appendChild(link);
       link.click();
       link.remove();
+      toast.success(`Report "${title}" downloaded successfully`);
     } catch (err) {
+      toast.error(`Failed to download report "${title}"`);
       console.error("Download failed", err);
     } finally {
       setDownloadingId(null);

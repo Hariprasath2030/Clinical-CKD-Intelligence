@@ -7,6 +7,7 @@ import PredictionResults from "../../components/ui/PredictionResults";
 import ShapChart from "../../components/charts/ShapChart";
 import { useEffect } from "react";
 import { submitLabResults } from "../../services/patientService";
+import { toast } from "sonner";
 
 export default function PredictionPage() {
   const [prediction, setPrediction] = useState<any>(null);
@@ -46,11 +47,13 @@ export default function PredictionPage() {
       };
       await submitLabResults(payload);
       const response = await runPrediction(payload);
+      toast.success("Prediction completed successfully");
       setPrediction(response.data);
     } catch (err: any) {
       setError(
         err.response?.data?.detail || "Prediction failed. Please try again.",
       );
+      toast.error("Prediction failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -65,12 +68,12 @@ export default function PredictionPage() {
       >
         <div className="mx-auto">
           {/* HERO */}
-          <div className="relative mb-16 rounded-3xl border border-gray-800 bg-gradient-to-br from-gray-950 via-black to-gray-950 p-12 shadow-[0_0_80px_rgba(59,130,246,0.08)] overflow-hidden">
+          <div className="relative mb-6 rounded-3xl border border-gray-800 bg-gradient-to-br from-gray-950 via-black to-gray-950 p-12 shadow-[0_0_80px_rgba(59,130,246,0.08)] overflow-hidden">
             <div className="absolute -top-32 -left-32 h-[400px] w-[400px] bg-blue-500/10 rounded-full blur-3xl" />
             <div className="absolute -bottom-32 -right-32 h-[400px] w-[400px] bg-purple-500/10 rounded-full blur-3xl" />
 
             <div className="relative z-10">
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text">
                 🔬 AI-Powered CKD Risk Prediction Engine
               </h1>
 
@@ -95,14 +98,13 @@ export default function PredictionPage() {
               )}
             </div>
 
-            {/* RESULTS PANEL — 1 Column Wide */}
             {prediction && (
               <div className="space-y-8">
                 <div className="rounded-3xl border border-gray-800 shadow-xl">
                   <PredictionResults result={prediction} />
                 </div>
 
-                {prediction.top_contributing_features && (
+                {/* {prediction.top_contributing_features && (
                   <div className="rounded-3xl border border-gray-800 bg-black backdrop-blur-xl p-8 shadow-xl">
                     <h3 className="text-xl font-semibold mb-6 text-blue-400">
                       Feature Contribution Analysis (SHAP)
@@ -111,14 +113,14 @@ export default function PredictionPage() {
                       features={prediction.top_contributing_features}
                     />
                   </div>
-                )}
+                )} */}
               </div>
             )}
           </div>
 
           {/* RECOMMENDATIONS */}
           {prediction?.recommendations && (
-            <div className="mt-16 rounded-3xl border border-gray-800 bg-black backdrop-blur-xl p-10 shadow-xl">
+            <div className="mt-10 rounded-3xl border border-gray-800 bg-black backdrop-blur-xl p-10 shadow-xl">
               <h2 className="text-2xl font-semibold mb-6 text-cyan-400">
                 Clinical Recommendations
               </h2>

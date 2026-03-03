@@ -157,7 +157,6 @@ export default function DoctorDashboard() {
   );
 }
 
-/* ---------------- Components ---------------- */
 function StatCard({ title, value, color }: any) {
   const colorMap: any = {
     blue: "bg-blue-500/10 text-blue-400 border-blue-500/20",

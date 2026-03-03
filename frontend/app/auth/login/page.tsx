@@ -7,6 +7,7 @@ import { saveToken } from "../../../lib/auth";
 import Link from "next/link";
 import { getToken } from "../../../lib/auth";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -27,16 +28,19 @@ export default function LoginPage() {
       const role = resp.data.user.role_id;
       if (role === 12) {
         router.push("/dashboard/doctor");
+        toast.success("Doctor Logged in successfully");
         setTimeout(() => {
           window.location.reload();
         }, 1000);
       } else {
         router.push("/dashboard/patient");
+        toast.success("Patient Logged in successfully");
         setTimeout(() => {
           window.location.reload();
         }, 1000);
       }
     } catch {
+      toast.error("Invalid email or password. Please try again.");
       setError("Invalid email or password. Please try again.");
     } finally {
       setLoading(false);

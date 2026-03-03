@@ -65,7 +65,7 @@ export default function PatientDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black to-gray-950">
-      <div className="mx-auto px-6 py-10 space-y-10">
+      <div className="mx-auto px-6 py-6 space-y-10">
         <div className="bg-gradient-to-r from-black to-gray-950 text-white rounded-3xl p-8 shadow-xl border-gray-700 border">
           <h1 className="text-4xl font-bold tracking-tight">
             Welcome back, {user?.full_name} 👋

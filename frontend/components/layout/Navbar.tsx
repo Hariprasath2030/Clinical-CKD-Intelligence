@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getCurrentUser } from "../../services/authService";
 import { clearToken } from "../../lib/auth";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
@@ -27,6 +28,7 @@ export default function Navbar() {
   const handleLogout = () => {
     clearToken();
     setUser(null);
+    toast.success("Logged out successfully");
     router.push("/");
   };
 

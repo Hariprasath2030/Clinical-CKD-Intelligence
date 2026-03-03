@@ -4,15 +4,14 @@ import { useState, useEffect } from "react";
 import Vapi from "@vapi-ai/web";
 import { PhoneCall, PhoneOff, Circle } from "lucide-react";
 import { toast } from "sonner";
-import Button from "../../components/ui/Button";
 import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 import { createConsultation } from "../../services/consultationService";
 import {
   runPrediction,
-  submitLabResults,
 } from "../../services/predictionService";
 import PredictionResults from "../../components/ui/PredictionResults";
 import ShapChart from "../../components/charts/ShapChart";
+import { submitLabResults } from "../../services/patientService";
 
 export default function ConsultationPage() {
   const [callStarted, setCallStarted] = useState(false);
@@ -338,15 +337,13 @@ You must ALWAYS output this JSON object even if the consultation was incomplete.
   }, [prediction]);
 
   return (
-    <div className="min-h-screen bg-black text-white px-6 py-12 transition-all duration-300">
-      <div className="relative mb-12 rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-950 via-black to-neutral-950 p-12 shadow-[0_0_80px_rgba(59,130,246,0.08)] overflow-hidden">
+    <div className="min-h-screen bg-black text-white px-6 py-6">
+      <div className="relative mb-6 rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-950 via-black to-neutral-950 p-12 shadow-[0_0_80px_rgba(59,130,246,0.08)] overflow-hidden">
         {/* Neon blurred circles */}
         <div className="absolute -top-32 -left-32 h-[400px] w-[400px] bg-cyan-500/10 rounded-full blur-3xl" />
         <div className="absolute -bottom-32 -right-32 h-[400px] w-[400px] bg-blue-500/10 rounded-full blur-3xl" />
-
-        {/* Header content */}
         <div className="relative z-10 text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text">
             🩺 AI Kidney Specialist Consultation
           </h1>
           <p className="mt-4 text-gray-400 text-lg max-w-3xl mx-auto md:mx-0 leading-relaxed">
@@ -356,11 +353,10 @@ You must ALWAYS output this JSON object even if the consultation was incomplete.
           </p>
         </div>
       </div>
-      <div className="w-full max-w-2xl mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-neutral-900 via-black to-neutral-950 p-6 shadow-[0_0_40px_rgba(59,130,246,0.08)] backdrop-blur-xl">
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-cyan-500/10 blur-3xl rounded-full" />
           <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/10 blur-3xl rounded-full" />
-
           <div className="relative flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative flex items-center justify-center">
@@ -393,95 +389,131 @@ You must ALWAYS output this JSON object even if the consultation was incomplete.
               </p>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="relative w-full max-w-2xl rounded-3xl border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-950 p-10 shadow-[0_0_60px_rgba(0,255,255,0.05)] overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-72 h-72 bg-cyan-500/10 blur-3xl rounded-full" />
-        <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-500/10 blur-3xl rounded-full" />
+          {/* Chat Window */}
+          <div className="absolute -top-24 -left-24 w-72 h-72 bg-cyan-500/10 blur-3xl rounded-full" />
+          <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-500/10 blur-3xl rounded-full" />
+          <div className="relative z-10 text-center">
+            <div className="relative mx-auto w-32 h-32 mb-6 flex items-center justify-center">
+              {callStarted && (
+                <div className="absolute w-40 h-40 rounded-full border border-cyan-500/40 animate-pulse" />
+              )}
 
-        <div className="relative z-10 text-center">
-          <div className="relative mx-auto w-32 h-32 mb-6 flex items-center justify-center">
-            {callStarted && (
-              <div className="absolute w-40 h-40 rounded-full border border-cyan-500/40 animate-pulse" />
-            )}
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-5xl shadow-inner">
+                🩺
+              </div>
+            </div>
 
-            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-5xl shadow-inner">
-              🩺
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              AI Kidney Specialist
+            </h2>
+
+            <p className="text-gray-400 mt-2 text-sm tracking-wide">
+              Intelligent Nephrology Voice Consultation System
+            </p>
+
+            <div className="mt-8 bg-black/40 border border-white/10 rounded-2xl p-6 max-h-72 overflow-y-auto backdrop-blur-md shadow-inner text-left space-y-3">
+              {messages.slice(-6).map((msg, index) => (
+                <div
+                  key={index}
+                  className={`text-sm ${
+                    msg.role === "assistant" ? "text-cyan-300" : "text-gray-300"
+                  }`}
+                >
+                  <span className="font-semibold capitalize">
+                    {msg.role === "assistant" ? "Doctor" : "Patient"}:
+                  </span>{" "}
+                  {msg.text}
+                </div>
+              ))}
+
+              {liveTranscript && (
+                <div className="italic text-gray-500 text-sm">
+                  {currentRole === "assistant" ? "Doctor" : "Patient"}:{" "}
+                  {liveTranscript}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-10 relative">
+              {!callStarted ? (
+                <button
+                  onClick={StartCall}
+                  disabled={loading}
+                  className="relative w-full group overflow-hidden rounded-2xl px-6 py-4 font-semibold text-lg transition-all duration-300"
+                >
+                  <span className="absolute inset-0 rounded-2xl bg-black opacity-70 blur-lg group-hover:opacity-100 transition" />
+                  <span className="relative flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4 text-white shadow-lg transition-all duration-300 group-hover:scale-[1.02] group-active:scale-[0.98]">
+                    {loading ? (
+                      <>
+                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Establishing Secure Connection...
+                      </>
+                    ) : (
+                      <>
+                        <PhoneCall className="w-5 h-5" />
+                        Initiate Consultation
+                      </>
+                    )}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={EndCall}
+                  className="relative w-full group overflow-hidden rounded-2xl px-6 py-4 font-semibold text-lg transition-all duration-300"
+                >
+                  <span className="absolute inset-0 rounded-2xl bg-black opacity-70 blur-lg animate-pulse" />
+
+                  <span className="relative flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 px-6 py-4 text-white shadow-lg transition-all duration-300 group-hover:scale-[1.02] group-active:scale-[0.98]">
+                    <span className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                    <PhoneOff className="w-5 h-5" />
+                    Terminate Consultation
+                  </span>
+                </button>
+              )}
             </div>
           </div>
+        </div>
 
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-            AI Kidney Specialist
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-950 p-10 shadow-[0_0_60px_rgba(59,130,246,0.08)]">
+          <h2 className="text-2xl font-semibold text-cyan-400 mb-6">
+            Stage-wise CKD Prediction
           </h2>
 
-          <p className="text-gray-400 mt-2 text-sm tracking-wide">
-            Intelligent Nephrology Voice Consultation System
-          </p>
+          {!prediction && (
+            <div className="text-gray-500 space-y-3">
+              <p>
+                The prediction will be generated based on the completed clinical
+                consultation and collected biomarker data.
+              </p>
+              <p className="text-sm text-gray-600">
+                Please complete the voice consultation and confirm all mandatory
+                laboratory values to enable stage-wise Chronic Kidney Disease
+                risk assessment.
+              </p>
+            </div>
+          )}
 
-          <div className="mt-8 bg-black/40 border border-white/10 rounded-2xl p-6 max-h-72 overflow-y-auto backdrop-blur-md shadow-inner text-left space-y-3">
-            {messages.slice(-6).map((msg, index) => (
-              <div
-                key={index}
-                className={`text-sm ${
-                  msg.role === "assistant" ? "text-cyan-300" : "text-gray-300"
-                }`}
-              >
-                <span className="font-semibold capitalize">
-                  {msg.role === "assistant" ? "Doctor" : "Patient"}:
-                </span>{" "}
-                {msg.text}
-              </div>
-            ))}
-
-            {liveTranscript && (
-              <div className="italic text-gray-500 text-sm">
-                {currentRole === "assistant" ? "Doctor" : "Patient"}:{" "}
-                {liveTranscript}
-              </div>
-            )}
-          </div>
-
-          <div className="mt-10 relative">
-            {!callStarted ? (
-              <button
-                onClick={StartCall}
-                disabled={loading}
-                className="relative w-full group overflow-hidden rounded-2xl px-6 py-4 font-semibold text-lg transition-all duration-300"
-              >
-                <span className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 opacity-70 blur-lg group-hover:opacity-100 transition" />
-                <span className="relative flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4 text-white shadow-lg transition-all duration-300 group-hover:scale-[1.02] group-active:scale-[0.98]">
-                  {loading ? (
-                    <>
-                      <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Establishing Secure Connection...
-                    </>
-                  ) : (
-                    <>
-                      <PhoneCall className="w-5 h-5" />
-                      Initiate Consultation
-                    </>
-                  )}
-                </span>
-              </button>
-            ) : (
-              <button
-                onClick={EndCall}
-                className="relative w-full group overflow-hidden rounded-2xl px-6 py-4 font-semibold text-lg transition-all duration-300"
-              >
-                <span className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-600 via-rose-500 to-red-600 opacity-70 blur-lg animate-pulse" />
-
-                <span className="relative flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 px-6 py-4 text-white shadow-lg transition-all duration-300 group-hover:scale-[1.02] group-active:scale-[0.98]">
-                  <span className="w-3 h-3 bg-white rounded-full animate-pulse" />
-                  <PhoneOff className="w-5 h-5" />
-                  Terminate Consultation
-                </span>
-              </button>
-            )}
-          </div>
+          {prediction && <PredictionResults result={prediction} />}
+          {/* {prediction.top_contributing_features && (
+            <ShapChart features={prediction.top_contributing_features} />
+          )} */}
         </div>
       </div>
 
+      {prediction?.recommendations && (
+        <div className="mt-12 rounded-3xl border border-gray-800 p-10 bg-gradient-to-br from-neutral-950 via-black to-neutral-950 shadow-[0_0_60px_rgba(0,255,255,0.05)]">
+          <h2 className="text-2xl font-semibold text-cyan-400 mb-6">
+            Clinical Recommendations
+          </h2>
+
+          <ul className="space-y-3 text-gray-300">
+            {prediction.recommendations.map((rec: string, index: number) => (
+              <li key={index}>• {rec}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {showPredictionPrompt && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50">
           <div className="bg-gray-950 border border-blue-600 rounded-3xl p-10 max-w-lg w-full shadow-2xl">
@@ -511,30 +543,6 @@ You must ALWAYS output this JSON object even if the consultation was incomplete.
               </button>
             </div>
           </div>
-        </div>
-      )}
-      {prediction && (
-        <div className="mt-12 w-full max-w-4xl space-y-8">
-          <PredictionResults result={prediction} />
-
-          {/* {prediction.top_contributing_features && (
-            <ShapChart features={prediction.top_contributing_features} />
-          )} */}
-
-          {prediction.recommendations && (
-            <div className="rounded-3xl border border-gray-800 p-8">
-              <h2 className="text-2xl font-semibold text-cyan-400 mb-4">
-                Clinical Recommendations
-              </h2>
-              <ul className="space-y-2">
-                {prediction.recommendations.map(
-                  (rec: string, index: number) => (
-                    <li key={index}>• {rec}</li>
-                  ),
-                )}
-              </ul>
-            </div>
-          )}
         </div>
       )}
       {showAlert && (

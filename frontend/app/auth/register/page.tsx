@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { register } from "../../../services/authService";
 import { saveToken } from "../../../lib/auth";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -38,10 +39,16 @@ export default function RegisterPage() {
           ? "/dashboard/patient"
           : "/dashboard/doctor",
       );
+      if (formData.role_name === "patient") {
+        toast.success("Patient Registered successfully");
+      } else {
+        toast.success("Doctor Registered successfully");
+      }
     } catch (err: any) {
       setError(
         err.response?.data?.detail || "Registration failed. Please try again.",
       );
+      toast.error("Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
