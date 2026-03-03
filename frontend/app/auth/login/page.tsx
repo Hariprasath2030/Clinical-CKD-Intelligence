@@ -31,13 +31,13 @@ export default function LoginPage() {
         toast.success("Doctor Logged in successfully");
         setTimeout(() => {
           window.location.reload();
-        }, 1000);
+        }, 2000);
       } else {
         router.push("/dashboard/patient");
         toast.success("Patient Logged in successfully");
         setTimeout(() => {
           window.location.reload();
-        }, 1000);
+        }, 2000);
       }
     } catch {
       toast.error("Invalid email or password. Please try again.");
