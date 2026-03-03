@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { getCurrentUser } from "../../services/authService";
 import { clearToken } from "../../lib/auth";
 import Link from "next/link";
@@ -12,6 +12,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     async function loadUser() {
@@ -32,26 +33,39 @@ export default function Navbar() {
     router.push("/");
   };
 
+  const linkClass = (path: string) =>
+    `relative transition px-3 py-2 rounded-lg ${
+      pathname === path
+        ? "text-white bg-white/10"
+        : "text-zinc-400 hover:text-white hover:bg-white/5"
+    }`;
+
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-lg bg-black border-b border-zinc-800">
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-black/70 border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
       <div className="mx-auto px-6">
         <div className="flex justify-between items-center h-16">
-          <Link
-            href="/"
-            className="text-2xl font-bold text-white tracking-tight"
-          >
-            CKD <span className="text-blue-500">Intelligence</span>
+          {/* Logo */}
+          <Link href="/" className="text-2xl font-bold tracking-tight">
+            <span className="text-white">CKD</span>{" "}
+            <span className="bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              Intelligence
+            </span>
           </Link>
 
+          {/* Desktop Links */}
           {user && (
-            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-300">
+            <div className="hidden md:flex items-center gap-3 text-sm font-medium">
               <Link
                 href={
                   user.role_id === 11
                     ? "/dashboard/patient"
                     : "/dashboard/doctor"
                 }
-                className="hover:text-white transition"
+                className={linkClass(
+                  user.role_id === 11
+                    ? "/dashboard/patient"
+                    : "/dashboard/doctor",
+                )}
               >
                 Dashboard
               </Link>
@@ -60,17 +74,14 @@ export default function Navbar() {
                 <>
                   <Link
                     href="/consultation"
-                    className="hover:text-white transition"
+                    className={linkClass("/consultation")}
                   >
                     Consultation
                   </Link>
-                  <Link
-                    href="/prediction"
-                    className="hover:text-white transition"
-                  >
+                  <Link href="/prediction" className={linkClass("/prediction")}>
                     Prediction
                   </Link>
-                  <Link href="/reports" className="hover:text-white transition">
+                  <Link href="/reports" className={linkClass("/reports")}>
                     Reports
                   </Link>
                 </>
@@ -78,41 +89,52 @@ export default function Navbar() {
             </div>
           )}
 
+          {/* Right Side */}
           <div className="flex items-center gap-4">
             {!user && (
               <div className="hidden md:flex items-center gap-4">
                 <Link
                   href="/auth/login"
-                  className="text-zinc-300 hover:text-white transition text-sm"
+                  className="text-zinc-400 hover:text-white transition text-sm"
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-lg shadow-blue-600/30 transition"
+                  className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 text-white px-5 py-2 rounded-xl text-sm font-semibold shadow-lg shadow-blue-500/20 transition"
                 >
                   Get Started
                 </Link>
               </div>
             )}
 
+            {/* Profile */}
             {user && (
               <div className="relative">
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
-                  className="flex items-center gap-2 text-sm text-zinc-300 hover:text-white transition"
+                  className="flex items-center gap-2"
                 >
-                  <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
+                  <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white font-semibold shadow-lg">
                     {user.full_name?.charAt(0)}
                   </div>
-                  <span className="hidden md:block">{user.full_name}</span>
+                  <span className="hidden md:block text-zinc-300 text-sm">
+                    {user.full_name}
+                  </span>
                 </button>
 
                 {menuOpen && (
-                  <div className="absolute right-0 mt-3 w-52 bg-neutral-900 border border-zinc-800 rounded-xl shadow-xl py-2">
+                  <div className="absolute right-0 mt-3 w-56 bg-black backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl py-2 animate-fadeIn">
+                    <div className="px-4 py-2 text-xs text-zinc-500">
+                      Signed in as
+                      <div className="text-zinc-300 text-sm mt-1">
+                        {user.email}
+                      </div>
+                    </div>
+                    <div className="border-t border-white/10 my-2" />
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-800 hover:text-white transition rounded-lg"
+                      className="w-full text-left px-4 py-2 text-sm text-zinc-300 hover:bg-white/5 hover:text-white transition rounded-lg"
                     >
                       Logout
                     </button>
@@ -121,17 +143,23 @@ export default function Navbar() {
               </div>
             )}
 
+            {/* Mobile Toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden text-zinc-300"
+              className="md:hidden text-zinc-300 text-2xl"
             >
-              ☰
+              {mobileOpen ? "✕" : "☰"}
             </button>
           </div>
         </div>
 
-        {mobileOpen && (
-          <div className="md:hidden pb-6 space-y-4 text-zinc-300 text-sm">
+        {/* Mobile Menu */}
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ${
+            mobileOpen ? "max-h-96 opacity-100 py-4" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="space-y-3 text-sm font-medium">
             {user ? (
               <>
                 <Link
@@ -140,45 +168,59 @@ export default function Navbar() {
                       ? "/dashboard/patient"
                       : "/dashboard/doctor"
                   }
-                  className="block hover:text-white"
+                  className="block text-zinc-400 hover:text-white"
                 >
                   Dashboard
                 </Link>
+
                 {user.role_id === 11 && (
                   <>
                     <Link
                       href="/consultation"
-                      className="block hover:text-white"
+                      className="block text-zinc-400 hover:text-white"
                     >
                       Consultation
                     </Link>
-                    <Link href="/prediction" className="block hover:text-white">
+                    <Link
+                      href="/prediction"
+                      className="block text-zinc-400 hover:text-white"
+                    >
                       Prediction
                     </Link>
-                    <Link href="/reports" className="block hover:text-white">
+                    <Link
+                      href="/reports"
+                      className="block text-zinc-400 hover:text-white"
+                    >
                       Reports
                     </Link>
                   </>
                 )}
+
                 <button
                   onClick={handleLogout}
-                  className="block text-left hover:text-white"
+                  className="block text-left text-red-400 hover:text-red-500"
                 >
                   Logout
                 </button>
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="block hover:text-white">
+                <Link
+                  href="/auth/login"
+                  className="block text-zinc-400 hover:text-white"
+                >
                   Login
                 </Link>
-                <Link href="/auth/register" className="block hover:text-white">
+                <Link
+                  href="/auth/register"
+                  className="block text-zinc-400 hover:text-white"
+                >
                   Register
                 </Link>
               </>
             )}
           </div>
-        )}
+        </div>
       </div>
     </nav>
   );

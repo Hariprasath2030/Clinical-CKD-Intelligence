@@ -64,356 +64,358 @@ export default function PatientDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black to-gray-950">
+    <div className="min-h-screen bg-black text-white">
       <div className="mx-auto px-6 py-6 space-y-10">
-        <div className="bg-gradient-to-r from-black to-gray-950 text-white rounded-3xl p-8 shadow-xl border-gray-700 border">
+        <div className="rounded-3xl p-10 bg-black border border-white/10 backdrop-blur-xl shadow-2xl">
           <h1 className="text-4xl font-bold tracking-tight">
             Welcome back, {user?.full_name} 👋
           </h1>
-          <p className="mt-3 text-indigo-100">
-            Monitor your kidney health and track clinical insights in real-time.
+          <p className="mt-3 text-gray-400 text-lg">
+            Monitor your kidney health and clinical insights in real-time.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Total Lab Tests */}
-          <div className="relative bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border border-gray-700 overflow-hidden group">
-            <div className="absolute top-0 right-0 w-2 h-full bg-blue-500 rounded-l-2xl"></div>
-            <p className="text-sm text-gray-400 uppercase tracking-wide">
-              Total Lab Tests
-            </p>
-            <p className="mt-2 text-3xl font-bold text-white">
-              {labResults.length}
-            </p>
-            <span className="text-xs text-gray-400">records</span>
-            <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
-              🧪
-            </div>
-          </div>
+        <div>
+          <h2 className="text-2xl font-semibold mb-6 text-gray-300">
+            📊 Analytics Overview
+          </h2>
 
-          {/* Latest Creatinine */}
-          <div className="relative bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border border-gray-700 overflow-hidden group">
-            <div className="absolute top-0 right-0 w-2 h-full bg-red-500 rounded-l-2xl"></div>
-            <p className="text-sm text-gray-400 uppercase tracking-wide">
-              Latest Creatinine
-            </p>
-            <p className="mt-2 text-3xl font-bold text-white">
-              {labResults[0]?.serum_creatinine ?? "N/A"}
-            </p>
-            <span className="text-xs text-gray-400">mg/dL</span>
-            <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
-              🩺
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="relative bg-black rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-700 overflow-hidden group hover:scale-[1.02] transition">
+              <div className="absolute top-0 right-0 w-2 h-full bg-blue-500 rounded-l-2xl"></div>
+              <p className="text-sm text-gray-400">Total Lab Tests</p>
+              <p className="text-4xl font-bold mt-2">{labResults.length}</p>
+              <span className="text-xs text-gray-400">records</span>
+              <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+                🧪
+              </div>
             </div>
-          </div>
 
-          {/* BMI */}
-          <div className="relative bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border border-gray-700 overflow-hidden group">
-            <div className="absolute top-0 right-0 w-2 h-full bg-green-500 rounded-l-2xl"></div>
-            <p className="text-sm text-gray-400 uppercase tracking-wide">BMI</p>
-            <p className="mt-2 text-3xl font-bold text-white">
-              {profile?.height_cm && profile?.weight_kg
-                ? (
-                    profile.weight_kg / Math.pow(profile.height_cm / 100, 2)
-                  ).toFixed(1)
-                : "N/A"}
-            </p>
-            <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
-              ⚖️
+            <div className="relative bg-black rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-700 overflow-hidden group hover:scale-[1.02] transition">
+              <div className="absolute top-0 right-0 w-2 h-full bg-red-500 rounded-l-2xl"></div>
+              <p className="text-sm text-gray-400">Latest Creatinine</p>
+              <p className="text-4xl font-bold mt-2">
+                {labResults[0]?.serum_creatinine ?? "N/A"}
+              </p>
+              <span className="text-xs text-gray-500">mg/dL</span>
+              <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+                🩺
+              </div>
             </div>
-          </div>
 
-          {/* Profile Status */}
-          <div className="relative bg-gray-950 rounded-2xl shadow-md hover:shadow-xl transition p-6 border border-gray-700 overflow-hidden group">
-            <div className="absolute top-0 right-0 w-2 h-full bg-yellow-500 rounded-l-2xl"></div>
-            <p className="text-sm text-gray-400 uppercase tracking-wide">
-              Profile Status
-            </p>
-            <div className="mt-3">
-              {profile ? (
-                <span className="px-3 py-1 text-sm rounded-full bg-green-700 text-white font-medium">
-                  Completed
-                </span>
-              ) : (
-                <span className="px-3 py-1 text-sm rounded-full bg-red-700 text-white font-medium">
-                  Incomplete
-                </span>
+            {/* BMI */}
+            <div className="relative bg-black rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-700 overflow-hidden group hover:scale-[1.02] transition">
+              <p className="text-sm text-gray-400">BMI</p>
+              <p className="text-4xl font-bold mt-2">
+                {profile?.height_cm && profile?.weight_kg
+                  ? (
+                      profile.weight_kg / Math.pow(profile.height_cm / 100, 2)
+                    ).toFixed(1)
+                  : "N/A"}
+              </p>
+              <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+                ⚖️
+              </div>
+            </div>
+
+            {/* Profile Status */}
+            <div className="relative bg-black rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-700 overflow-hidden group hover:scale-[1.02] transition">
+              <div className="absolute top-0 right-0 w-2 h-full bg-yellow-500 rounded-l-2xl"></div>
+              <p className="text-sm text-gray-400">Profile Status</p>
+              <div className="mt-4">
+                {profile ? (
+                  <span className="px-4 py-1 rounded-full bg-green-500/20 text-green-400 text-sm font-medium">
+                    Completed
+                  </span>
+                ) : (
+                  <span className="px-4 py-1 rounded-full bg-red-500/20 text-red-400 text-sm font-medium">
+                    Incomplete
+                  </span>
+                )}
+              </div>
+              {!profile && (
+                <button
+                  onClick={() => setShowProfileForm((s) => !s)}
+                  className="mt-4 w-full rounded-xl bg-indigo-600 py-2 text-white font-medium hover:bg-indigo-700 transition"
+                >
+                  {showProfileForm ? "Close Form" : "Complete Profile"}
+                </button>
               )}
+              <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+                👤
+              </div>
             </div>
+            {showProfileForm && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black backdrop-blur-sm">
+                {/* Modal Card */}
+                <div className="relative w-full max-w-xl rounded-3xl border border-gray-700 bg-black p-8 shadow-2xl animate-fadeIn">
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setShowProfileForm(false)}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"
+                  >
+                    ✕
+                  </button>
 
-            {!profile && (
-              <button
-                onClick={() => setShowProfileForm((s) => !s)}
-                className="mt-4 w-full rounded-xl bg-indigo-600 py-2 text-white font-medium hover:bg-indigo-700 transition"
-              >
-                {showProfileForm ? "Close Form" : "Complete Profile"}
-              </button>
+                  <h2 className="text-2xl font-bold mb-6 text-white">
+                    Complete Your Profile
+                  </h2>
+
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      try {
+                        const payload = {
+                          date_of_birth: profileForm.date_of_birth,
+                          sex: profileForm.sex,
+                          height_cm: profileForm.height_cm
+                            ? Number(profileForm.height_cm)
+                            : undefined,
+                          weight_kg: profileForm.weight_kg
+                            ? Number(profileForm.weight_kg)
+                            : undefined,
+                          medical_history: profileForm.medical_history,
+                          medications: profileForm.medications,
+                        };
+
+                        const res = await createProfile(payload);
+                        setProfile(res.data);
+                        setShowProfileForm(false);
+                      } catch {
+                        alert("Failed to create profile");
+                      }
+                    }}
+                    className="grid grid-cols-1 gap-4"
+                  >
+                    <input
+                      type="date"
+                      value={profileForm.date_of_birth}
+                      onChange={(e) =>
+                        setProfileForm((p) => ({
+                          ...p,
+                          date_of_birth: e.target.value,
+                        }))
+                      }
+                      className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white focus:ring-2 focus:ring-indigo-500"
+                      required
+                    />
+
+                    <select
+                      value={profileForm.sex}
+                      onChange={(e) =>
+                        setProfileForm((p) => ({ ...p, sex: e.target.value }))
+                      }
+                      className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="M">Male</option>
+                      <option value="F">Female</option>
+                    </select>
+
+                    <input
+                      type="number"
+                      placeholder="Height (cm)"
+                      value={profileForm.height_cm}
+                      onChange={(e) =>
+                        setProfileForm((p) => ({
+                          ...p,
+                          height_cm: e.target.value,
+                        }))
+                      }
+                      className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Weight (kg)"
+                      value={profileForm.weight_kg}
+                      onChange={(e) =>
+                        setProfileForm((p) => ({
+                          ...p,
+                          weight_kg: e.target.value,
+                        }))
+                      }
+                      className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white"
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Medical History"
+                      value={profileForm.medical_history}
+                      onChange={(e) =>
+                        setProfileForm((p) => ({
+                          ...p,
+                          medical_history: e.target.value,
+                        }))
+                      }
+                      className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white"
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Medications"
+                      value={profileForm.medications}
+                      onChange={(e) =>
+                        setProfileForm((p) => ({
+                          ...p,
+                          medications: e.target.value,
+                        }))
+                      }
+                      className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white"
+                    />
+
+                    <button className="mt-4 rounded-xl bg-indigo-600 py-2 text-white font-semibold hover:bg-indigo-700 transition">
+                      Save Profile
+                    </button>
+                  </form>
+                </div>
+              </div>
             )}
-            <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
-              👤
-            </div>
           </div>
         </div>
 
-        {showProfileForm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black backdrop-blur-sm">
-            {/* Modal Card */}
-            <div className="relative w-full max-w-xl rounded-3xl border border-gray-700 bg-black p-8 shadow-2xl animate-fadeIn">
-              {/* Close Button */}
-              <button
-                onClick={() => setShowProfileForm(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"
+        {/* ================= ROW 2 — QUICK ACTIONS ================= */}
+        <div>
+          <h2 className="text-2xl font-semibold mb-6 text-gray-300">
+            ⚡ Quick Actions
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                href: "/consultation",
+                title: "Voice Consultation",
+                desc: "Talk to AI-assisted doctor instantly",
+                icon: "🎤",
+              },
+              {
+                href: "/prediction",
+                title: "CKD Prediction",
+                desc: "Run risk analysis on lab data",
+                icon: "🔬",
+              },
+              {
+                href: "/reports",
+                title: "Medical Reports",
+                desc: "View history & generated reports",
+                icon: "📄",
+              },
+            ].map((item, i) => (
+              <a
+                key={i}
+                href={item.href}
+                className="group rounded-3xl bg-black border border-white/10 p-8 shadow-xl hover:shadow-blue-500/10 hover:-translate-y-2 transition-all duration-300"
               >
-                ✕
-              </button>
-
-              <h2 className="text-2xl font-bold mb-6 text-white">
-                Complete Your Profile
-              </h2>
-
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  try {
-                    const payload = {
-                      date_of_birth: profileForm.date_of_birth,
-                      sex: profileForm.sex,
-                      height_cm: profileForm.height_cm
-                        ? Number(profileForm.height_cm)
-                        : undefined,
-                      weight_kg: profileForm.weight_kg
-                        ? Number(profileForm.weight_kg)
-                        : undefined,
-                      medical_history: profileForm.medical_history,
-                      medications: profileForm.medications,
-                    };
-
-                    const res = await createProfile(payload);
-                    setProfile(res.data);
-                    setShowProfileForm(false);
-                  } catch {
-                    alert("Failed to create profile");
-                  }
-                }}
-                className="grid grid-cols-1 gap-4"
-              >
-                <input
-                  type="date"
-                  value={profileForm.date_of_birth}
-                  onChange={(e) =>
-                    setProfileForm((p) => ({
-                      ...p,
-                      date_of_birth: e.target.value,
-                    }))
-                  }
-                  className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white focus:ring-2 focus:ring-indigo-500"
-                  required
-                />
-
-                <select
-                  value={profileForm.sex}
-                  onChange={(e) =>
-                    setProfileForm((p) => ({ ...p, sex: e.target.value }))
-                  }
-                  className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option value="M">Male</option>
-                  <option value="F">Female</option>
-                </select>
-
-                <input
-                  type="number"
-                  placeholder="Height (cm)"
-                  value={profileForm.height_cm}
-                  onChange={(e) =>
-                    setProfileForm((p) => ({ ...p, height_cm: e.target.value }))
-                  }
-                  className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white"
-                />
-
-                <input
-                  type="number"
-                  placeholder="Weight (kg)"
-                  value={profileForm.weight_kg}
-                  onChange={(e) =>
-                    setProfileForm((p) => ({ ...p, weight_kg: e.target.value }))
-                  }
-                  className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white"
-                />
-
-                <input
-                  type="text"
-                  placeholder="Medical History"
-                  value={profileForm.medical_history}
-                  onChange={(e) =>
-                    setProfileForm((p) => ({
-                      ...p,
-                      medical_history: e.target.value,
-                    }))
-                  }
-                  className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white"
-                />
-
-                <input
-                  type="text"
-                  placeholder="Medications"
-                  value={profileForm.medications}
-                  onChange={(e) =>
-                    setProfileForm((p) => ({
-                      ...p,
-                      medications: e.target.value,
-                    }))
-                  }
-                  className="rounded-xl bg-gray-800 border border-gray-700 px-4 py-2 text-white"
-                />
-
-                <button className="mt-4 rounded-xl bg-indigo-600 py-2 text-white font-semibold hover:bg-indigo-700 transition">
-                  Save Profile
-                </button>
-              </form>
-            </div>
+                <div className="text-4xl mb-6">{item.icon}</div>
+                <h3 className="text-xl font-semibold group-hover:text-blue-400 transition">
+                  {item.title}
+                </h3>
+                <p className="text-gray-400 mt-2 text-sm">{item.desc}</p>
+              </a>
+            ))}
           </div>
-        )}
-
-        {/* QUICK ACTIONS + LAB RESULTS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-black rounded-3xl shadow-2xl p-8 border border-gray-700">
-            <h2 className="text-3xl font-extrabold mb-6 text-white">
-              ⚡ Quick Actions
+        </div>
+        <div className="bg-black rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+          <div className="px-8 py-6 border-b border-white/10">
+            <h2 className="text-2xl font-semibold text-white">
+              🧪 Recent Predicted - CKD Lab Results
             </h2>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              {[
-                {
-                  href: "/consultation",
-                  title: "Voice Consultation",
-                  description: "Talk to AI-assisted doctor instantly",
-                  color: "blue",
-                  icon: "🎤",
-                },
-                {
-                  href: "/prediction",
-                  title: "CKD Prediction",
-                  description: "Run risk analysis on lab data",
-                  color: "blue",
-                  icon: "🔬",
-                },
-                {
-                  href: "/reports",
-                  title: "Medical Reports",
-                  description: "View patient history & reports",
-                  color: "blue",
-                  icon: "📄",
-                },
-              ].map((item, i) => (
-                <a
-                  key={i}
-                  href={item.href}
-                  className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-gray-950 hover:bg-gray-800 transition-transform transform hover:scale-105 shadow-lg border border-gray-800 overflow-hidden`}
-                >
-                  <span
-                    className={`absolute left-0 top-0 h-full w-2 rounded-l-2xl bg-${item.color}-500`}
-                  />
-
-                  {/* Icon */}
-                  <div className="text-4xl mb-4">{item.icon}</div>
-
-                  <h3 className="text-xl font-semibold text-white group-hover:text-${item.color}-400">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-400 mt-1 text-sm">
-                    {item.description}
-                  </p>
-
-                  <div className="absolute inset-0 bg-${item.color}-500/10 opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity"></div>
-                </a>
-              ))}
-            </div>
+            <p className="text-sm text-gray-400 mt-1">
+              Overview of your latest clinical test records
+            </p>
           </div>
 
-          <div className="bg-black rounded-3xl shadow-2xl p-8 border border-gray-700">
-            <h2 className="text-3xl font-extrabold mb-6 text-white">
-              🧪 Recent Lab Results
-            </h2>
+          {labResults.length === 0 ? (
+            <div className="py-16 text-center text-gray-500">
+              No lab results recorded yet.
+            </div>
+          ) : (
+            <div className="h-[450px] overflow-y-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse">
+                <thead className="sticky top-0 bg-gray-950 text-gray-400 text-sm uppercase tracking-wide z-10">
+                  <tr>
+                    <th className="px-8 py-4">Date</th>
+                    <th className="px-8 py-4">Creatinine</th>
+                    <th className="px-8 py-4">Blood Pressure</th>
+                    <th className="px-8 py-4">Albumin</th>
+                    <th className="px-8 py-4">Notes</th>
+                  </tr>
+                </thead>
 
-            {labResults.length === 0 ? (
-              <p className="text-gray-400 text-center py-10 italic">
-                No lab results recorded yet.
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {labResults.slice(0, 5).map((result, index) => {
-                  const creatinineLevel = result.serum_creatinine;
-                  const riskColor =
-                    creatinineLevel < 1.2
-                      ? "bg-green-500/20 text-green-400"
-                      : creatinineLevel < 2
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-red-500/20 text-red-400";
+                <tbody className="divide-y divide-white/5">
+                  {labResults.map((result, index) => {
+                    const creatinineLevel = result.serum_creatinine;
 
-                  return (
-                    <div
-                      key={index}
-                      className="flex flex-col md:flex-row justify-between items-start md:items-center p-5 rounded-2xl bg-gray-950 hover:bg-gray-700 transition-all border border-gray-700 shadow-md"
-                    >
-                      <div className="flex-1">
-                        <p className="text-lg font-semibold text-white">
-                          Date: {formatDate(result.test_date)}
-                        </p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Creatinine:{" "}
+                    const riskColor =
+                      creatinineLevel < 1.2
+                        ? "text-green-400 bg-green-500/10"
+                        : creatinineLevel < 2
+                          ? "text-yellow-400 bg-yellow-500/10"
+                          : "text-red-400 bg-red-500/10";
+
+                    return (
+                      <tr
+                        key={index}
+                        className="hover:bg-white/5 transition duration-200"
+                      >
+                        <td className="px-8 py-5 text-white font-medium">
+                          {formatDate(result.test_date)}
+                        </td>
+
+                        <td className="px-8 py-5">
                           <span
-                            className={`font-bold px-2 py-1 rounded-full ${riskColor}`}
+                            className={`px-3 py-1 rounded-full text-sm font-semibold ${riskColor}`}
                           >
                             {result.serum_creatinine} mg/dL
                           </span>
-                        </p>
-                      </div>
+                        </td>
 
-                      <div className="flex-1 mt-3 md:mt-0 md:text-center">
-                        <p className="text-sm text-gray-400">
-                          BP:{" "}
-                          <span className="font-medium text-white">
-                            {result.blood_pressure_sys}/
-                            {result.blood_pressure_dia} mmHg
-                          </span>
-                        </p>
-                        {result.albumin && (
-                          <p className="text-sm text-gray-400 mt-1">
-                            Albumin:{" "}
-                            <span className="font-medium text-white">
-                              {result.albumin} g/dL
-                            </span>
-                          </p>
-                        )}
-                      </div>
+                        <td className="px-8 py-5 text-gray-300">
+                          {result.blood_pressure_sys}/
+                          {result.blood_pressure_dia} mmHg
+                        </td>
 
-                      {/* Right: Notes / Mini Badge */}
-                      <div className="flex-1 mt-3 md:mt-0 md:text-right">
-                        {result.notes ? (
-                          <p className="text-sm text-gray-300 italic truncate max-w-xs">
-                            "{result.notes}"
-                          </p>
-                        ) : (
-                          <span className="text-sm text-gray-500">
-                            No notes
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                        <td className="px-8 py-5 text-gray-300">
+                          {result.albumin ?? "—"}
+                        </td>
+
+                        <td className="px-8 py-5 text-gray-400 max-w-xs truncate">
+                          {result.notes || "No notes"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+        <div>
+          <h2 className="text-2xl font-semibold mb-6 text-gray-300">
+            🩺 Consultation History
+          </h2>
+
+          {/* <div className="rounded-3xl bg-gradient-to-br from-gray-900 to-black border border-white/10 shadow-2xl p-8 space-y-6">
+            {consultations?.length === 0 ? (
+              <p className="text-gray-500 text-center py-12">
+                No consultations yet.
+              </p>
+            ) : (
+              consultations?.slice(0, 5).map((c, index) => (
+                <div
+                  key={index}
+                  className="border-l-2 border-blue-500 pl-6 relative"
+                >
+                  <div className="absolute -left-[7px] top-2 w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <p className="text-sm text-gray-400">
+                    {formatDate(c.created_at)}
+                  </p>
+                  <p className="mt-1 text-white font-medium">
+                    {c.summary || "Consultation session"}
+                  </p>
+                </div>
+              ))
             )}
-
-            {/* View All Button */}
-            {labResults.length > 5 && (
-              <div className="mt-6 text-center">
-                <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-lg transition">
-                  View All Lab Results
-                </button>
-              </div>
-            )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
