@@ -83,13 +83,37 @@ class LabResultResponse(LabResultCreate):
     class Config:
         from_attributes = True
 
-# ============== Consultation Schemas ==============
+# ============== Consultation Structured Data Schema ==============
+
+class KidneyConsultationStructured(BaseModel):
+    age: int
+    sex: str  # "male" or "female"
+    serum_creatinine: float
+    systolic_blood_pressure: float
+    diastolic_blood_pressure: float
+    glycated_hemoglobin: float
+    medical_history: Optional[str] = None
+    medications: Optional[str] = None
+    bmi: float
+    crp: float
+    cystatin_c: float
+    # Optional labs
+    blood_urea: Optional[float] = None
+    sodium: Optional[float] = None
+    potassium: Optional[float] = None
+    phosphorus: Optional[float] = None
+    calcium: Optional[float] = None
+    albumin: Optional[float] = None
+    hemoglobin: Optional[float] = None
+    test_date: Optional[datetime] = None
+    lab_name: Optional[str] = None
+    notes: Optional[str] = None
+    
 class ConsultationCreate(BaseModel):
-    input_type: str  # "voice" or "text"
+    input_type: str
     raw_input: str
     transcription: Optional[str] = None
-    structured_data: Dict[str, Any]
-
+    structured_data: KidneyConsultationStructured
 class ConsultationResponse(ConsultationCreate):
     id: int
     user_id: int
