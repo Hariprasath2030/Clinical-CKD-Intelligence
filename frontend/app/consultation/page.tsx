@@ -6,9 +6,7 @@ import { PhoneCall, PhoneOff, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { CreateAssistantDTO } from "@vapi-ai/web/dist/api";
 import { createConsultation } from "../../services/consultationService";
-import {
-  runPrediction,
-} from "../../services/predictionService";
+import { runPrediction } from "../../services/predictionService";
 import PredictionResults from "../../components/ui/PredictionResults";
 import ShapChart from "../../components/charts/ShapChart";
 import { submitLabResults } from "../../services/patientService";
@@ -476,6 +474,30 @@ You must ALWAYS output this JSON object even if the consultation was incomplete.
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-950 p-10 shadow-[0_0_60px_rgba(59,130,246,0.08)]">
+          {(prediction || structuredData || messages.length > 0) && (
+            <div className="flex justify-end mb-2">
+              <button
+                onClick={() => {
+                  setPrediction(null);
+                  setStructuredData(null);
+                  setMessages([]);
+                  setLiveTranscript("");
+                  setCallStarted(false);
+                  setShowAlert(false);
+                  setShowPredictionPrompt(false);
+                  setDuration(0);
+                  if (vapiInstance) {
+                    vapiInstance.stop();
+                    vapiInstance.removeAllListeners();
+                    setVapiInstance(null);
+                  }
+                }}
+                className="px-6 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition font-semibold text-white"
+              >
+                Reset Consultation
+              </button>
+            </div>
+          )}
           <h2 className="text-2xl font-semibold text-cyan-400 mb-6">
             Stage-wise CKD Prediction
           </h2>

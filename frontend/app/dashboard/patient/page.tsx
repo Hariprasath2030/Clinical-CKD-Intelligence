@@ -5,13 +5,15 @@ import { useRouter } from "next/navigation";
 import { getCurrentUser } from "../../../services/authService";
 import { getProfile, createProfile } from "../../../services/patientService";
 import { getLabResults } from "../../../services/patientService";
-import { formatDate } from "../../../lib/utils";
+import { formatDate, formatDateTime } from "../../../lib/utils";
+import { getConsultations } from "../../../services/consultationService";
 
 export default function PatientDashboard() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [labResults, setLabResults] = useState<any[]>([]);
   const [showProfileForm, setShowProfileForm] = useState(false);
+  const [consultations, setConsultations] = useState<any[]>([]);
   const [profileForm, setProfileForm] = useState({
     date_of_birth: "",
     sex: "M",
@@ -52,6 +54,11 @@ export default function PatientDashboard() {
     loadData();
   }, [router]);
 
+  useEffect(() => {
+    getConsultations().then((res) => {
+      setConsultations(res.data);
+    });
+  }, []);
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -80,7 +87,7 @@ export default function PatientDashboard() {
             📊 Analytics Overview
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="relative bg-black rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-700 overflow-hidden group hover:scale-[1.02] transition">
               <div className="absolute top-0 right-0 w-2 h-full bg-blue-500 rounded-l-2xl"></div>
               <p className="text-sm text-gray-400">Total Lab Tests</p>
@@ -88,6 +95,16 @@ export default function PatientDashboard() {
               <span className="text-xs text-gray-400">records</span>
               <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
                 🧪
+              </div>
+            </div>
+            {/* Consultation Count Card */}
+            <div className="relative bg-black rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-700 overflow-hidden group hover:scale-[1.02] transition">
+              <div className="absolute top-0 right-0 w-2 h-full bg-purple-500 rounded-l-2xl"></div>
+              <p className="text-sm text-gray-400">Total Consultations</p>
+              <p className="text-4xl font-bold mt-2">{consultations.length}</p>
+              <span className="text-xs text-gray-400">records</span>
+              <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
+                🎤
               </div>
             </div>
 
@@ -102,9 +119,8 @@ export default function PatientDashboard() {
                 🩺
               </div>
             </div>
-
-            {/* BMI */}
             <div className="relative bg-black rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-700 overflow-hidden group hover:scale-[1.02] transition">
+              <div className="absolute top-0 right-0 w-2 h-full bg-orange-500 rounded-l-2xl"></div>
               <p className="text-sm text-gray-400">BMI</p>
               <p className="text-4xl font-bold mt-2">
                 {profile?.height_cm && profile?.weight_kg
@@ -113,12 +129,14 @@ export default function PatientDashboard() {
                     ).toFixed(1)
                   : "N/A"}
               </p>
+              <p className="text-xs text-gray-500 mt-2">
+                Calculated by height * weight
+              </p>
               <div className="absolute bottom-4 right-4 text-2xl opacity-20 group-hover:opacity-40 transition">
                 ⚖️
               </div>
             </div>
 
-            {/* Profile Status */}
             <div className="relative bg-black rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-700 overflow-hidden group hover:scale-[1.02] transition">
               <div className="absolute top-0 right-0 w-2 h-full bg-yellow-500 rounded-l-2xl"></div>
               <p className="text-sm text-gray-400">Profile Status</p>
@@ -147,9 +165,7 @@ export default function PatientDashboard() {
             </div>
             {showProfileForm && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black backdrop-blur-sm">
-                {/* Modal Card */}
                 <div className="relative w-full max-w-xl rounded-3xl border border-gray-700 bg-black p-8 shadow-2xl animate-fadeIn">
-                  {/* Close Button */}
                   <button
                     onClick={() => setShowProfileForm(false)}
                     className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"
@@ -272,8 +288,6 @@ export default function PatientDashboard() {
             )}
           </div>
         </div>
-
-        {/* ================= ROW 2 — QUICK ACTIONS ================= */}
         <div>
           <h2 className="text-2xl font-semibold mb-6 text-gray-300">
             ⚡ Quick Actions
@@ -331,9 +345,9 @@ export default function PatientDashboard() {
           ) : (
             <div className="h-[450px] overflow-y-auto custom-scrollbar">
               <table className="w-full text-left border-collapse">
-                <thead className="sticky top-0 bg-gray-950 text-gray-400 text-sm uppercase tracking-wide z-10">
+                <thead className="sticky top-0 bg-gray-950 text-gray-400 text-sm capitalize tracking-wide z-10">
                   <tr>
-                    <th className="px-8 py-4">Date</th>
+                    <th className="px-8 py-4">Date & Time</th>
                     <th className="px-8 py-4">Creatinine</th>
                     <th className="px-8 py-4">Blood Pressure</th>
                     <th className="px-8 py-4">Albumin</th>
@@ -358,7 +372,7 @@ export default function PatientDashboard() {
                         className="hover:bg-white/5 transition duration-200"
                       >
                         <td className="px-8 py-5 text-white font-medium">
-                          {formatDate(result.test_date)}
+                          {formatDateTime(result.test_date)}
                         </td>
 
                         <td className="px-8 py-5">
@@ -389,33 +403,88 @@ export default function PatientDashboard() {
             </div>
           )}
         </div>
-        <div>
-          <h2 className="text-2xl font-semibold mb-6 text-gray-300">
-            🩺 Consultation History
-          </h2>
+        <div className="bg-black rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+          <div className="px-8 py-6 border-b border-white/10">
+            <h2 className="text-2xl font-semibold text-white">
+              🗂️ Recent Consultations
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">
+              All your recorded kidney health consultations
+            </p>
+          </div>
 
-          {/* <div className="rounded-3xl bg-gradient-to-br from-gray-900 to-black border border-white/10 shadow-2xl p-8 space-y-6">
-            {consultations?.length === 0 ? (
-              <p className="text-gray-500 text-center py-12">
-                No consultations yet.
-              </p>
-            ) : (
-              consultations?.slice(0, 5).map((c, index) => (
-                <div
-                  key={index}
-                  className="border-l-2 border-blue-500 pl-6 relative"
-                >
-                  <div className="absolute -left-[7px] top-2 w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <p className="text-sm text-gray-400">
-                    {formatDate(c.created_at)}
-                  </p>
-                  <p className="mt-1 text-white font-medium">
-                    {c.summary || "Consultation session"}
-                  </p>
-                </div>
-              ))
-            )}
-          </div> */}
+          {consultations.length === 0 ? (
+            <div className="py-16 text-center text-gray-500">
+              No consultations recorded yet.
+            </div>
+          ) : (
+            <div className="h-[450px] overflow-y-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse">
+                <thead className="sticky top-0 bg-gray-950 text-gray-400 text-sm capitalize tracking-wide z-10">
+                  <tr>
+                    <th className="px-6 py-4">Date & Time</th>
+                    <th className="px-6 py-4">Age</th>
+                    <th className="px-6 py-4">Sex</th>
+                    <th className="px-6 py-4">Serum Creatinine</th>
+                    <th className="px-6 py-4">Systolic BP</th>
+                    <th className="px-6 py-4">Diastolic BP</th>
+                    <th className="px-6 py-4">HbA1c (%)</th>
+                    <th className="px-6 py-4">Albumin</th>
+                    <th className="px-6 py-4">BMI</th>
+                    <th className="px-6 py-4">CRP</th>
+                    <th className="px-6 py-4">Cystatin C</th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-white/5">
+                  {consultations.map((record, index) => {
+                    const data = record.structured_data;
+
+                    return (
+                      <tr
+                        key={index}
+                        className="hover:bg-white/5 transition duration-200"
+                      >
+                        <td className="px-6 py-4 text-white font-medium">
+                          {new Date(record.created_at).toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.age ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.sex ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.serum_creatinine ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.systolic_blood_pressure ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.diastolic_blood_pressure ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.glycated_hemoglobin ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.albumin ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.bmi ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.crp ?? "—"}
+                        </td>
+                        <td className="px-6 py-4 text-gray-300">
+                          {data.cystatin_c ?? "—"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>

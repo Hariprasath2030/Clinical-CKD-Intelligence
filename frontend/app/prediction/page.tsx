@@ -87,7 +87,6 @@ export default function PredictionPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* INPUT PANEL — 2 Columns Wide */}
             <div className="lg:col-span-2 rounded-2xl border border-gray-800 bg-black backdrop-blur-xl p-2 shadow-xl">
               <ClinicalDataInput onSubmit={handleSubmit} />
 
@@ -97,7 +96,39 @@ export default function PredictionPage() {
                 </div>
               )}
             </div>
+            <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-neutral-950 via-black to-neutral-950 p-10 shadow-[0_0_60px_rgba(59,130,246,0.08)]">
+              <div className="flex justify-end mb-6">
+                {prediction && (
+                  <button
+                    onClick={() => {
+                      setPrediction(null);
+                      setError("");
+                      setShowAlert(false);
+                      toast.success("Ready for new prediction");
+                    }}
+                    className="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-2 rounded-xl font-semibold"
+                  >
+                    Reset Prediction
+                  </button>
+                )}
+              </div>
+              <h2 className="text-2xl font-semibold text-cyan-400 mb-6">
+                Stage-wise CKD Prediction
+              </h2>
 
+              {!prediction && (
+                <div className="text-gray-400 space-y-3">
+                  <p className="text-lg">
+                    No prediction generated yet. Enter the patient’s clinical
+                    data above to run the CKD risk assessment.
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Make sure all mandatory lab values and vitals are provided
+                    for an accurate stage-wise prediction.
+                  </p>
+                </div>
+              )}
+            </div>
             {prediction && (
               <div className="space-y-8">
                 <div className="rounded-3xl border border-gray-800 shadow-xl">

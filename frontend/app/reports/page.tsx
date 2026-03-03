@@ -73,14 +73,11 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white px-6 py-12 ">
-      {/* HEADER / REPORTS CARD */}
+    <div className="min-h-screen bg-black text-white px-6 py-6">
       <div className="relative mb-8 rounded-3xl border border-neutral-800 bg-gradient-to-br from-neutral-950 via-black to-neutral-950 p-12 shadow-[0_0_80px_rgba(59,130,246,0.08)] overflow-hidden">
-        {/* Neon blurred circles */}
         <div className="absolute -top-32 -left-32 h-[400px] w-[400px] bg-blue-500/10 rounded-full blur-3xl" />
         <div className="absolute -bottom-32 -right-32 h-[400px] w-[400px] bg-purple-500/10 rounded-full blur-3xl" />
 
-        {/* Header content */}
         <div className="relative z-10 flex flex-col md:flex-row md:justify-between md:items-center gap-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
@@ -92,8 +89,6 @@ export default function ReportsPage() {
               instantly.
             </p>
           </div>
-
-          {/* Search bar inside header */}
           <div className="flex items-center bg-neutral-900 border border-neutral-700 rounded-xl px-4 py-2 w-full md:w-96 focus-within:border-blue-500 transition">
             <search className="w-4 h-4 text-gray-400 mr-2" />
             <input
@@ -107,9 +102,7 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* CONTENT */}
-      <div className="mx-auto px-6 py-6">
-        {/* Stats */}
+      <div className="mx-auto">
         <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-gray-400">
             Total Reports:{" "}
@@ -119,9 +112,8 @@ export default function ReportsPage() {
           </p>
         </div>
 
-        {/* Empty State */}
         {filteredReports.length === 0 ? (
-          <div className="bg-neutral-950 border border-neutral-800 rounded-2xl p-16 text-center shadow-xl">
+          <div className="bg-black border border-neutral-800 rounded-2xl p-16 text-center shadow-xl">
             <h3 className="text-lg font-semibold text-gray-300">
               No reports found
             </h3>
@@ -130,9 +122,9 @@ export default function ReportsPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 shadow-2xl">
+          <div className="h-[450px] overflow-y-auto rounded-2xl border border-neutral-800 bg-black shadow-2xl">
             <table className="min-w-full text-sm">
-              <thead className="bg-neutral-900 text-gray-400 uppercase text-xs tracking-wider border-b border-neutral-800">
+              <thead className="bg-gray-950 text-gray-400 uppercase text-xs tracking-wider border-b border-neutral-800">
                 <tr>
                   <th className="px-6 py-4 text-left">Report Title</th>
                   <th className="px-6 py-4 text-left">Stage</th>
