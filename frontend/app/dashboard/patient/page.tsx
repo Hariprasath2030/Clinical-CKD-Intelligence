@@ -293,7 +293,7 @@ export default function PatientDashboard() {
             ⚡ Quick Actions
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-4 gap-8">
             {[
               {
                 href: "/consultation",
@@ -313,10 +313,19 @@ export default function PatientDashboard() {
                 desc: "View history & generated reports",
                 icon: "📄",
               },
+              {
+                href: "http://127.0.0.1:5000/image_based",
+                title: "Kidney Image Prediction",
+                desc: "Upload kidney scans for AI detection",
+                icon: "🩻",
+                newTab: true, // <-- flag to open in new tab
+              },
             ].map((item, i) => (
               <a
                 key={i}
                 href={item.href}
+                target={item.newTab ? "_blank" : "_self"}
+                rel={item.newTab ? "noopener noreferrer" : undefined}
                 className="group rounded-3xl bg-black border border-white/10 p-8 shadow-xl hover:shadow-blue-500/10 hover:-translate-y-2 transition-all duration-300"
               >
                 <div className="text-4xl mb-6">{item.icon}</div>

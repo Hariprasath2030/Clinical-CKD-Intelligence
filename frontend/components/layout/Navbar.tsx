@@ -76,10 +76,10 @@ export default function Navbar() {
                     href="/consultation"
                     className={linkClass("/consultation")}
                   >
-                    Consultation Based Prediction
+                    Consultation Prediction
                   </Link>
                   <Link href="/prediction" className={linkClass("/prediction")}>
-                    Features Based Prediction
+                    Features Prediction
                   </Link>
                   <a
                     href="http://127.0.0.1:5000/image_based"
@@ -87,7 +87,7 @@ export default function Navbar() {
                     rel="noopener noreferrer"
                     className={linkClass("/image_based")}
                   >
-                    Image Based Prediction
+                    Image Prediction
                   </a>
                   <Link href="/reports" className={linkClass("/reports")}>
                     Reports
