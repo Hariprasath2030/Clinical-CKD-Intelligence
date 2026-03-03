@@ -597,7 +597,19 @@ cd frontend && npm run dev
 ```
 
 Then visit http://localhost:3000 and register!
+Right now Vapi is handling:
 
+🎤 Mic streaming
+
+🧠 Realtime STT (AssemblyAI)
+
+🤖 LLM conversation
+
+🔊 TTS voice
+
+🔁 Turn-taking logic
+
+🌐 WebRTC transport
 ---
 
 **Built with ❤️ for CKD patient care and clinical decision support.**
