@@ -76,11 +76,19 @@ export default function Navbar() {
                     href="/consultation"
                     className={linkClass("/consultation")}
                   >
-                    Consultation
+                    Consultation Based Prediction
                   </Link>
                   <Link href="/prediction" className={linkClass("/prediction")}>
-                    Prediction
+                    Features Based Prediction
                   </Link>
+                  <a
+                    href="http://127.0.0.1:5000/image_based"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass("/image_based")}
+                  >
+                    Image Based Prediction
+                  </a>
                   <Link href="/reports" className={linkClass("/reports")}>
                     Reports
                   </Link>
