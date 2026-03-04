@@ -184,11 +184,44 @@ You must ALWAYS output this JSON object even if the consultation was incomplete.
           setMessages((prev) => [...prev, { role, text: transcript }]);
           setLiveTranscript("");
           setCurrentRole(null);
+          if (
+        role === "assistant" &&
+        transcript.includes(
+          "Thank you for providing your information. If you experience new symptoms or have further concerns, please consult your healthcare provider. I wish you good health."
+        )
+      ) {
+        EndCall();
+      }
         }
       }
     });
 
     setLoading(false);
+  };
+
+  const checkMissingFields = (structured: any) => {
+    const mandatoryFields = [
+      "age",
+      "sex",
+      "serum_creatinine",
+      "systolic_blood_pressure",
+      "diastolic_blood_pressure",
+      "glycated_hemoglobin",
+      "albumin",
+      "bmi",
+      "crp",
+      "cystatin_c",
+    ];
+    const missingFields = mandatoryFields.filter(
+      (field) => structured[field] === null || structured[field] === undefined,
+    );
+
+    if (missingFields.length > 0) {
+      toast.warning(`Missing fields: ${missingFields.join(", ")}`);
+      return true;
+    }
+
+    return false;
   };
 
   const EndCall = async () => {
@@ -199,74 +232,107 @@ You must ALWAYS output this JSON object even if the consultation was incomplete.
     setCallStarted(false);
 
     // const fullConversation =
-    //   "assistant: Hello. Thank you for connecting with this kidney health consultation.\nassistant: May I know your name?\nuser: My name is aripas.\nuser: At.\nassistant: Thank you, Aripas. I will ask you a few important questions.\nassistant: To assess kidney health.\nassistant: May I know your age and years?\nuser: My age is 22.\nassistant: Thank you for confirming your age as 22 years.\nassistant: Could you please provide your biological sex?\nuser: L ra.\nassistant: Thank you. Could you please confirm if your biological sex is female?\nuser: Il.\nassistant: Thank you for confirming your biological sex as male.\nassistant: Could you share your most recent serum creatinine value in milligrams per deciliter?\nuser: Two point.\nuser: Two.\nassistant: Thank you.\nassistant: To confirm. Your most recent serum creatinine value is 2.2 milligrams per deciliter.\nassistant: Please let me know if this was accurate.\nuser: 30.\nuser: Four.\nassistant: To confirm your most recent serum creatinine value.\nassistant: Was at 1.34 milligrams per deciliter.\nuser: You're correct.\nassistant: Thank you for confirming your serum creatinine value as 1.34 milligrams per deciliter.\nassistant: Could you now provide your most recent systolic blood pressure reading in millimeters of mercury?\nuser: It is 4.4.\nassistant: It seems there may be a misunderstanding. Could you clarify your most recent systolic blood pressure value?\nuser: 20.4.\nassistant: Thank you. To clarify, is your systolic blood pressure reading 120 millimeters of mercury?\nuser: Yeah.\nassistant: Thank you for confirming your systolic blood pressure as 120 millimeters of mercury.\nassistant: Could you now provide your most recent diastolic blood pressure reading in millimeters of mercury?\nuser: 140.\nassistant: It seems there may be a misunderstanding. Could you please confirm your diastolic blood pressure reading?\nuser: Six.\nuser: 60.\nassistant: Thank you. To confirm, your most recent diastolic blood pressure reading is 60 millimeters of mercury.\nassistant: Please let me know if this is correct.\nuser: Yeah, it's correct.\nassistant: Thank you for confirming your diastolic blood pressure as 60 millimeters of mercury.\nassistant: Could you now provide your most recent glycated hemoglobin test result in percentage?\nuser: 10.1.\nassistant: To confirm, your most recent glycated hemoglobin test result is 10.1 percent.\nassistant: Please let me know if this interpretation is correct.\nuser: Yes.\nassistant: Thank you for confirming your glycated hemoglobin test result as 10.1 percent.\nassistant: Please provide your serum albumin level in grams per deciliter.\nuser: Three.\nassistant: To confirm, your serum albumin level is 3 grams per deciliter.\nuser: Three point eight.\nassistant: Thank you for the clarification. To confirm, your serum albumin level is 3.8 grams per deciliter.\nuser: Yes.\nassistant: Thank you for confirming your serum albumin level as 3.8 grams per deciliter.\nassistant: Could you now provide your body mass index?\nuser: Twenty.\nassistant: To confirm, your body mass index is 20.\nuser: 24.5.\nassistant: Thank you for the correction. To confirm, your body mass index is 24.5.\nuser: Correct.\nassistant: Thank you for confirming your body mass index as 24.5.\nassistant: Could you now provide your C-reactive protein level in milligrams per liter?\nuser: Five.\nassistant: To confirm, your C-reactive protein level is 5 milligrams per liter.\nuser: Five point two.\nassistant: Thank you for the clarification. To confirm, your C-reactive protein level is 5.2 milligrams per liter.\nuser: Yes.\nassistant: Thank you for confirming your C-reactive protein level as 5.2 milligrams per liter.\nassistant: Finally, could you provide your cystatin C level in milligrams per liter?\nuser: One.\nassistant: To confirm, your cystatin C level is 1 milligram per liter.\nuser: One point eight.\nassistant: Thank you for the clarification. To confirm, your cystatin C level is 1.8 milligrams per liter.\nuser: Yes, correct.";
+    //   "assistant: Hello. Thank you for connecting with this kidney health consultation.\nassistant: May I know your name?\nuser: Yoga.\nassistant: Thank you, Yoga. I will ask you a few important questions.\nassistant: To assess.\nassistant: Kidney.\nuser: Yes.\nassistant: Man. I know your age. And yours.\nuser: 22.\nassistant: Thank you, yoga.\nassistant: Could you please provide?\nassistant: Your biological sex.\nuser: Fem.\nuser: Le.\nassistant: Thank you. Yoga, could you please provide your serum creatinine level?\nassistant: Measured in milligrams per deciliter.\nassistant: Mjodal.\nuser: Two.\nassistant: Thank you, yoga.\nassistant: Could you please provide your systolic blood pressure?\nassistant: In millimeters of mercury.\nuser: 80.\nassistant: Thank you. Yoga. Could you please provide your diastolic blood pressure value in millimeters of mercury?\nuser: Two.\nassistant: Thank you, Yoga. Could you provide your glycated hemoglobin HbA1c value in percentage?\nuser: 72.\nassistant: Thank you, Yoga. Could you now provide your serum albumin level?\nassistant: In grams per deciliter.\nuser: 2.2.\nassistant: Thank you, yoga.\nassistant: Could you provide your body mass index?\nassistant: Bmi value if known.\nuser: 7.5.\nassistant: Thank you. Yoga. Could you now provide your creactive protein?\nassistant: CRP level in milligrams per liter.\nuser: 3.5.\nassistant: Thank you. Yoga. Could you provide your assistatin C level in milligrams per liter?\nuser: On point.\nuser: One.\nassistant: Thank you, yoga.\nassistant: Could you now share any relevant medical history?\nassistant: Such as any known known conditions or diagnoses.";
     try {
       const fullConversation = messages
         .map((m) => `${m.role}: ${m.text}`)
         .join("\n");
 
-      const patientTranscript = messages
+      const patientTranscript = fullConversation;
+
+      const userTranscript = messages
         .filter((m) => m.role === "user")
         .map((m) => m.text)
         .join(" ");
+      console.log("patientTranscript", patientTranscript);
+      // Function to parse numbers from text (handles "two point two" → 2.2)
+      const parseNumberFromText = (text: string) => {
+        const wordToNum: Record<string, string> = {
+          zero: "0",
+          one: "1",
+          two: "2",
+          three: "3",
+          four: "4",
+          five: "5",
+          six: "6",
+          seven: "7",
+          eight: "8",
+          nine: "9",
+        };
 
-      const extractNumber = (text: string, pattern: RegExp) => {
-        const match = text.match(pattern);
-        return match ? Number(match[1]) : null;
+        let t = text.toLowerCase();
+        Object.keys(wordToNum).forEach((word) => {
+          const re = new RegExp(`\\b${word}\\b`, "g");
+          t = t.replace(re, wordToNum[word]);
+        });
+
+        t = t.replace(/\bpoint\b/g, ".");
+
+        const match = t.match(/(\d+(\.\d+)?)/);
+        return match ? parseFloat(match[1]) : null;
       };
 
-      const transcript = fullConversation;
-      const age = extractNumber(transcript, /age as (\d+)/i);
-      const creatinine = extractNumber(
-        transcript,
-        /serum creatinine value as (\d+(\.\d+)?)/i,
-      );
-      const systolic = extractNumber(
-        transcript,
-        /systolic blood pressure as (\d+)/i,
-      );
-      const diastolic = extractNumber(
-        transcript,
-        /diastolic blood pressure as (\d+)/i,
-      );
-      const hba1c = extractNumber(
-        transcript,
-        /glycated hemoglobin.*?(\d+(\.\d+)?)/i,
-      );
-      const albumin = extractNumber(transcript, /albumin.*?(\d+(\.\d+)?)/i);
+      // Extract sex from transcript
+      const sexMatch = /female|male/i.exec(patientTranscript);
+      const sex = sexMatch ? sexMatch[0].toLowerCase() : null;
 
-      const bmi = extractNumber(transcript, /body mass index.*?(\d+(\.\d+)?)/i);
-
-      const crp = extractNumber(
-        transcript,
-        /c-reactive protein.*?(\d+(\.\d+)?)/i,
+      const age = parseNumberFromText(
+        patientTranscript.match(/age.*?(\d+)/i)?.[0] || patientTranscript,
       );
-
-      const cystatinC = extractNumber(
-        transcript,
-        /cystatin c.*?(\d+(\.\d+)?)/i,
+      const serum_creatinine = parseNumberFromText(
+        patientTranscript.match(/creatinine/i)?.input || patientTranscript,
       );
-      const sexMatch = transcript.match(/biological sex as (\w+)/i);
-      const sex = sexMatch ? sexMatch[1] : null;
+      const systolic_blood_pressure = parseNumberFromText(
+        patientTranscript.match(/systolic/i)?.input || patientTranscript,
+      );
+      const diastolic_blood_pressure = parseNumberFromText(
+        patientTranscript.match(/diastolic/i)?.input || patientTranscript,
+      );
+      const glycated_hemoglobin = parseNumberFromText(
+        patientTranscript.match(/glycated hemoglobin/i)?.input ||
+          patientTranscript,
+      );
+      const albumin = parseNumberFromText(
+        patientTranscript.match(/albumin/i)?.input || patientTranscript,
+      );
+      const bmi = parseNumberFromText(
+        patientTranscript.match(/body mass index/i)?.input || patientTranscript,
+      );
+      const crp = parseNumberFromText(
+        patientTranscript.match(/c-?reactive protein/i)?.input ||
+          patientTranscript,
+      );
+      const cystatin_c = parseNumberFromText(
+        patientTranscript.match(/cystatin c/i)?.input || patientTranscript,
+      );
 
       const structured = {
         age,
-        sex,
-        serum_creatinine: creatinine,
-        systolic_blood_pressure: systolic,
-        diastolic_blood_pressure: diastolic,
-        glycated_hemoglobin: hba1c,
+        sex: sex,
+        serum_creatinine: serum_creatinine,
+        systolic_blood_pressure: systolic_blood_pressure,
+        diastolic_blood_pressure: diastolic_blood_pressure,
+        glycated_hemoglobin: glycated_hemoglobin,
         albumin: albumin,
         bmi,
         crp,
-        cystatin_c: cystatinC,
+        cystatin_c,
+        medical_history: null,
+        current_medications: null,
+        risk_level: null,
       };
+
+      const hasMissing = checkMissingFields(structured);
+      if (hasMissing) {
+        return;
+      }
       await createConsultation({
         input_type: "voice",
         raw_input: fullConversation,
-        transcription: patientTranscript,
-        structured_data: structured || {},
+        transcription: userTranscript,
+        structured_data: structured,
       });
+
       setStructuredData(structured);
       toast.success("Consultation saved successfully");
 
@@ -277,6 +343,8 @@ You must ALWAYS output this JSON object even if the consultation was incomplete.
       console.error(error);
       toast.error("Failed to save consultation");
     }
+
+    // Reset state
     setVapiInstance(null);
     setMessages([]);
     setLiveTranscript("");
